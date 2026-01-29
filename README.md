@@ -252,40 +252,25 @@ Open Library API Docs
 
 Bootstrap Documentation
 
-And here are some pictures of the project:
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (1)](https://github.com/user-attachments/assets/652d2001-1c44-4cd8-94d1-09a121d96c57)
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (4)](https://github.com/user-attachments/assets/f2e8131a-d2f3-458c-b04f-79cc0abddb9b)
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (3)](https://github.com/user-attachments/assets/2e2425df-b2cb-47d0-999d-283273d8200a)
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (2)](https://github.com/user-attachments/assets/761d8f75-7b0e-445f-be89-dccfcffd279b)
-
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (6)](https://github.com/user-attachments/assets/5b8c6a3d-a4b0-478e-bfe8-98ffdfd25c03)
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (5)](https://github.com/user-attachments/assets/e7677e1e-53b6-47b8-a012-a13848c76ce6)
-![WhatsApp Image 2026-01-29 at 7 05 43 PM](https://github.com/user-attachments/assets/e5fdd2d9-4f49-43a9-b2e3-84e2bba4bdad)
-![WhatsApp Image 2026-01-29 at 7 05 43 PM (7)](https://github.com/user-attachments/assets/32784ad7-9ddf-4c93-9991-63935f75647d)
-
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (3)](https://github.com/user-attachments/assets/92d1066f-04a6-46be-af33-9b3b74cc7866)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (2)](https://github.com/user-attachments/assets/132b71fa-edbe-4930-b05d-fbb107e85878)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (1)](https://github.com/user-attachments/assets/e58fea64-d96a-41d0-b307-f63abc869386)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (4)](https://github.com/user-attachments/assets/0ffcb047-fd0c-4a37-8718-4c3b87465f56)
-
-
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (5)](https://github.com/user-attachments/assets/1ec483a2-45c7-4e66-bf0c-eadd56ee6840)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (8)](https://github.com/user-attachments/assets/6c1be84a-859d-45b4-9b65-4fd0014eafc6)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (7)](https://github.com/user-attachments/assets/18494407-fca8-4554-9995-2f9894682505)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (6)](https://github.com/user-attachments/assets/d72bbb2b-e460-4e68-a470-a4768e350559)
-
-
-
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (9)](https://github.com/user-attachments/assets/9f550702-3ecb-4964-8839-75d35ad551f5)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (12)](https://github.com/user-attachments/assets/d1fd3226-63fa-47a1-876b-93f46db7930a)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (11)](https://github.com/user-attachments/assets/64626455-a5d0-4bda-864c-e012be94b7a9)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (10)](https://github.com/user-attachments/assets/20d6fc78-48a2-4092-9762-894735b2d0f8)
-
-
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (13)](https://github.com/user-attachments/assets/0d3cf46a-ed64-4180-b757-255d0026b83a)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM](https://github.com/user-attachments/assets/dff9062d-255e-49ab-9442-357c077a0d1b)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (15)](https://github.com/user-attachments/assets/238e0968-a8d5-4562-bcd9-212826d71d72)
-![WhatsApp Image 2026-01-29 at 7 05 44 PM (14)](https://github.com/user-attachments/assets/007b1224-3616-4be4-9d03-8fe08561e26b)
-
-
+And here are some screenshots of the project:
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (15)](https://github.com/user-attachments/assets/e5f8d858-4ffd-4d4c-84a9-ae81be008516)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (14)](https://github.com/user-attachments/assets/0dc0c83b-cf30-4087-99de-ca1c8d700612)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (13)](https://github.com/user-attachments/assets/57ee61cd-738f-442e-9412-b401a3815e7c)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (12)](https://github.com/user-attachments/assets/0e2602a1-dd3f-4c3d-9543-05b7b144f7d4)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (11)](https://github.com/user-attachments/assets/7ff74f92-b179-4ac3-9869-ea6968fbeb44)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (10)](https://github.com/user-attachments/assets/d4c2c39a-341b-40ce-b4e7-40204fd4e13f)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (9)](https://github.com/user-attachments/assets/a56a977f-2443-463e-9959-a327e4507059)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (8)](https://github.com/user-attachments/assets/100448dc-523b-4de0-9214-cc431c0d1ddc)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (7)](https://github.com/user-attachments/assets/9ed121ce-1760-4f9a-9510-2189c45a6a52)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (6)](https://github.com/user-attachments/assets/c9f8e302-85d1-45f1-bc0b-3a21da44a75f)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (5)](https://github.com/user-attachments/assets/c0fc3c3f-fe5e-4f9d-b488-e97bf0b4767f)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (4)](https://github.com/user-attachments/assets/b7a9e3b3-b009-4fe4-9cf4-25184928fb6e)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (3)](https://github.com/user-attachments/assets/a0268927-de66-4d5f-8b66-06c4637c1694)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (2)](https://github.com/user-attachments/assets/999f1326-d3b0-4b31-ac08-e60cd53d9e28)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM (1)](https://github.com/user-attachments/assets/a9dae51d-6329-4239-aeca-06b3a226bda0)
+![WhatsApp Image 2026-01-29 at 7 05 43 PM](https://github.com/user-attachments/assets/44254c2b-7492-45e8-bd8d-6947343733fb)
+![WhatsApp Image 2026-01-29 at 7 05 43 PM (7)](https://github.com/user-attachments/assets/46dd28b9-92c0-4002-b644-4515f7f5e6be)
+![WhatsApp Image 2026-01-29 at 7 05 43 PM (6)](https://github.com/user-attachments/assets/8092413a-0cec-4f79-9828-5ab44bfee3c2)
+![WhatsApp Image 2026-01-29 at 7 05 43 PM (5)](https://github.com/user-attachments/assets/e58e96f1-1fb1-4dab-9a1b-3b3d55c32622)
+![WhatsApp Image 2026-01-29 at 7 05 44 PM](https://github.com/user-attachments/assets/89cee75d-d11a-4b62-bd65-8e350c8a6150)
 
