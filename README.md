@@ -173,7 +173,7 @@ Notification
 
 ⚙️ Installation & Setup
 1️⃣ Clone the Repository
-git clone https://github.com/your-username/social-library.git
+git clone https://github.com/Bou-eng/social-library.git
 cd social-library
 
 2️⃣ Create a Virtual Environment
