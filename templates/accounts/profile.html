@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ profile_user.username }} — Sosyal Kütüphanem</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts/home.css' %}">
+</head>
+<body class="profile-page">
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-logo">
+        <div class="brand-icon">📚</div>
+        <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+      </div>
+    </div>
+
+    <!-- center nav removed per design — keep header focused on brand + action -->
+
+    <div class="nav-right user-area">
+      <a href="{% url 'home' %}" class="btn btn-primary">Anasayfa</a>
+    </div>
+  </header>
+  <div class="profile-container">
+    <div class="profile-card">
+      {% if messages %}
+        <div>
+          {% for message in messages %}
+            {% if 'profile' in message.tags or 'password' in message.tags %}
+              <div class="server-alert alert-{{ message.tags }}" role="alert">
+                <div class="alert-icon">!</div>
+                <div class="alert-body">{{ message }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Main header: avatar left, details right -->
+      <div class="profile-main">
+        <div class="avatar-column">
+          {% if profile and profile.avatar %}
+            <img src="{{ profile.avatar.url }}" alt="avatar" class="profile-avatar">
+          {% else %}
+            <div class="avatar-fallback-large">{{ profile_user.get_full_name|default:profile_user.username|slice:":1"|upper }}</div>
+          {% endif %}
+        </div>
+
+        <div class="details-column">
+          <div class="name-row">
+            <h2 class="display-name">{% if profile and profile.display_name %}{{ profile.display_name }}{% elif profile_user.first_name %}{{ profile_user.first_name }}{% else %}{{ profile_user.username }}{% endif %}</h2>
+            <div class="muted small email-line">{{ profile_user.email }}</div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat"><div class="count">{{ activity_count }}</div><div class="label">Etkinlikler</div></div>
+            <div class="stat"><div class="count">{{ followers_count }}</div><div class="label">Takipçiler</div></div>
+            <div class="stat"><div class="count">{{ following_count }}</div><div class="label">Takip Edilenler</div></div>
+          </div>
+
+          <div class="bio">{% if profile and profile.bio %}{{ profile.bio }}{% else %}<span class="muted">Henüz biyografi yok.</span>{% endif %}</div>
+
+          {% if is_owner %}
+            <div class="actions-row">
+              <a href="{% url 'edit_profile' username=profile_user.username %}" class="btn btn-primary">Profili Düzenle</a>
+              <a href="{% url 'password_change' %}" class="btn btn-primary">Şifre Değiştir</a>
+              <!-- Delete triggers a confirmation modal -->
+              <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">Hesabı Sil</button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="profile-highlights">
+    <div class="highlights">
+      <h4>Son Etkinlikler</h4>
+      <div class="activities-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
+        {% for a in activities %}
+          <div class="activity-card card" data-activity-id="{{ a.id }}" data-activity-type="{{ a.activity_type }}" data-media-type="{{ a.media_type }}" data-full-comment="{{ a.comment_text|escape }}" style="background:linear-gradient(180deg,#071027,#051021);padding:10px;border-radius:10px;">
+            <div style="display:flex;gap:8px;align-items:flex-start">
+              <div style="flex:0 0 64px;">
+                {% if a.cover_url %}
+                  <img src="{{ a.cover_url }}" alt="cover" style="width:64px;height:96px;object-fit:cover;border-radius:6px;" />
+                {% else %}
+                  <div style="width:64px;height:96px;border-radius:6px;background:#081321;display:flex;align-items:center;justify-content:center">📘</div>
+                {% endif %}
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;color:#9aa3b2;margin-bottom:6px;">
+                  {% if a.activity_type == 'rating' %}
+                    {% if a.media_type == 'book' %}Bu kitabı değerlendirdiniz.{% else %}Bu filmi değerlendirdiniz.{% endif %}
+                  {% else %}
+                    {% if a.media_type == 'book' %}Bu kitap hakkında yorum yaptınız.{% else %}Bu film hakkında yorum yaptınız.{% endif %}
+                  {% endif %}
+                </div>
+                <div style="font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ a.title }}</div>
+                <div style="font-size:12px;color:#7f8a99;margin-top:4px">{{ a.year }} {% if a.media_type == 'book' %}• Kitap{% else %}• Film{% endif %}</div>
+                <div style="margin-top:8px;font-size:13px;color:#cfd8e3">
+                  {% if a.activity_type == 'rating' %}
+                    Puanınız: {{ a.rating }}/10
+                  {% else %}
+                    Yorumunuz: {{ a.comment_text|truncatechars:120 }}{% if a.comment_text|length > 120 %} <small style="color:#97a1b2">(Tüm yorumu görmek için tıklayın)</small>{% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <div class="muted">Son etkinlik yok.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile comment modal (read-only) -->
+  <div id="profile-comment-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(2,6,23,0.7);align-items:center;justify-content:center;z-index:12000;">
+    <div id="profile-comment-modal" style="background:#0b1120;padding:20px;border-radius:12px;max-width:640px;width:94%;color:#fff;max-height:85vh;overflow:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div style="font-weight:700">Yorum</div>
+        <button id="profile-comment-close" class="btn btn-secondary">Kapat</button>
+      </div>
+      <div style="display:flex;gap:12px;margin-bottom:12px;">
+        <div style="flex:0 0 100px;"><img id="profile-comment-cover" src="" alt="cover" style="width:100px;height:150px;object-fit:cover;border-radius:8px;" /></div>
+        <div style="flex:1;">
+          <div id="profile-comment-title" style="font-weight:700;font-size:18px"></div>
+          <div id="profile-comment-year" style="color:#9aa3b2;margin-top:6px"></div>
+        </div>
+      </div>
+      <div id="profile-comment-body" style="white-space:pre-wrap;color:#dfe7f3;"> </div>
+    </div>
+  </div>
+
+  <script>
+    // Fade out Django messages if present
+    document.addEventListener('DOMContentLoaded', function(){
+      const alerts = document.querySelectorAll('.server-alert');
+      alerts.forEach(a=>{
+        setTimeout(()=>{ a.style.transition='opacity .4s'; a.style.opacity=0; setTimeout(()=>a.remove(),500); }, 2500);
+      });
+    });
+  </script>
+  <script>
+    // Activity card click handling: open profile comment modal for comment activities
+    document.addEventListener('DOMContentLoaded', function(){
+      const modalOverlay = document.getElementById('profile-comment-modal-overlay');
+      const modal = document.getElementById('profile-comment-modal');
+      const closeBtn = document.getElementById('profile-comment-close');
+      const coverImg = document.getElementById('profile-comment-cover');
+      const titleEl = document.getElementById('profile-comment-title');
+      const yearEl = document.getElementById('profile-comment-year');
+      const bodyEl = document.getElementById('profile-comment-body');
+
+      function openModal(data){
+        if(!modalOverlay) return;
+        coverImg.src = data.cover_url || '/static/accounts/cover-placeholder.png';
+        titleEl.textContent = data.title || '';
+        yearEl.textContent = data.year ? (data.year + (data.media_type === 'book' ? ' • Kitap' : ' • Film')) : '';
+        bodyEl.textContent = data.comment_text || '';
+        modalOverlay.style.display = 'flex';
+      }
+      function closeModal(){ if(modalOverlay) modalOverlay.style.display = 'none'; }
+
+      closeBtn && closeBtn.addEventListener('click', closeModal);
+
+      document.querySelectorAll('.activity-card').forEach(card=>{
+        card.addEventListener('click', function(){
+          try{
+            const activityType = card.getAttribute('data-activity-type') || '';
+            const mediaType = card.getAttribute('data-media-type') || '';
+            if(activityType !== 'review') return; // only open modal for comment activities
+            const full = card.getAttribute('data-full-comment') || '';
+            const cover = card.querySelector('img') ? card.querySelector('img').src : '';
+            const titleEl = card.querySelector('div[style*="font-weight:700"]');
+            const title = titleEl ? titleEl.textContent.trim() : '';
+            const yearEl = card.querySelector('div[style*="font-size:12px"]');
+            const yearText = yearEl ? yearEl.textContent.trim() : '';
+            openModal({ title: title, year: yearText, comment_text: full, cover_url: cover, media_type: mediaType });
+          }catch(e){ console.error(e); }
+        });
+      });
+    });
+  </script>
+  <!-- Delete confirmation modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteConfirmLabel">Hesabı Sil</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <p>Bu işlemi yapmak istediğinizden emin misiniz? Hesabınız kalıcı olarak silinecektir.</p>
+          <form id="delete-account-form" method="post" action="{% url 'delete_account' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="del-password" class="form-label">Şifre (zorunlu)</label>
+              <input type="password" name="password" id="del-password" class="form-control" placeholder="Şifreniz" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+          <button type="button" class="btn btn-danger" id="confirm-delete">Hesabı Sil</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const confirmBtn = document.getElementById('confirm-delete');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', function(){
+          const form = document.getElementById('delete-account-form');
+          if (form) form.submit();
+        });
+      }
+    });
+  </script>
+  <script>
+    // If the server returned a delete-related error message, open the modal and show inline feedback.
+    document.addEventListener('DOMContentLoaded', function(){
+      const alerts = Array.from(document.querySelectorAll('.server-alert'));
+      const deleteAlert = alerts.find(a => a.className && a.className.indexOf('delete_error') !== -1);
+      if (deleteAlert) {
+        // show modal
+        const modalEl = document.getElementById('deleteConfirmModal');
+        if (modalEl && window.bootstrap && typeof window.bootstrap.Modal === 'function') {
+          const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+          modal.show();
+        }
+
+        // mark input invalid and show feedback
+        const input = document.getElementById('del-password');
+        if (input) {
+          input.classList.add('is-invalid');
+          let feedback = input.parentElement.querySelector('.invalid-feedback');
+          if (!feedback) {
+            feedback = document.createElement('div');
+            feedback.className = 'invalid-feedback';
+            input.parentElement.appendChild(feedback);
+          }
+          // use alert text if available
+          const alertBody = deleteAlert.querySelector('.alert-body');
+          feedback.textContent = alertBody ? alertBody.textContent.trim() : 'Şifre yanlış. Lütfen tekrar deneyin.';
+          feedback.style.display = 'block';
+        }
+      }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

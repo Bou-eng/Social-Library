@@ -1,0 +1,251 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kayıt Ol</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/register.css' %}">
+  <style>
+    /* Inline override to ensure register-page invalid visuals are applied */
+    body.register-page .input-wrapper { display: block; }
+    body.register-page .input-wrapper input.is-invalid,
+    body.register-page #first_name.is-invalid { 
+      border-color: #dc3545 !important;
+      box-shadow: 0 0 0 0.12rem rgba(220,53,69,0.12) !important;
+    }
+    /* invalid-feedback visibility is handled by stylesheet + .is-invalid selector; do not force it always visible */
+    body.register-page .form-control:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 0.18rem rgba(59,130,246,0.18) !important; }
+    .btn-login { cursor: pointer !important; }
+  </style>
+</head>
+<body class="register-page">
+  <div class="login-container">
+    <div class="brand-logo">
+      <div class="brand-icon">📚</div>
+      <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+    </div>
+
+    <div class="login-card">
+      <h1 class="login-title">Kayıt Ol</h1>
+
+      {% if messages %}
+        <div>
+          {% for message in messages %}
+            <div class="server-alert alert-{{ message.tags }}" role="alert">
+              <div class="alert-icon">!</div>
+              <div class="alert-body">{{ message }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form id="register-form" method="POST" action="{% url 'register' %}" novalidate>
+        {% csrf_token %}
+        <!-- First name -->
+        <div class="mb-3">
+          <label for="first_name" class="form-label">İsim</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              class="form-control {% if field_errors.first_name %}is-invalid{% endif %}"
+              id="first_name"
+              name="first_name"
+              placeholder="İsim"
+              required
+              value="{{ form_values.first_name|default:'' }}"
+            />
+            <div class="invalid-feedback">{% if field_errors.first_name %}{{ field_errors.first_name }}{% endif %}</div>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label for="email" class="form-label">E-posta</label>
+          <div class="input-wrapper">
+            <input
+              type="email"
+              class="form-control {% if field_errors.email %}is-invalid{% endif %}"
+              id="email"
+              name="email"
+              placeholder="example@example.com"
+              required
+              value="{{ form_values.email|default:'' }}"
+            />
+            <div class="invalid-feedback">{% if field_errors.email %}{{ field_errors.email }}{% endif %}</div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label for="password" class="form-label">Şifre</label>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              class="form-control {% if field_errors.password %}is-invalid{% endif %}"
+              id="password"
+              name="password"
+              placeholder="Şifre"
+              required
+              minlength="6"
+            />
+            <span class="toggle-password" id="togglePasswordReg">Göster</span>
+          </div>
+          <div class="invalid-feedback">{% if field_errors.password %}{{ field_errors.password }}{% endif %}</div>
+        </div>
+
+        <!-- Password confirm -->
+        <div class="mb-3">
+          <label for="password2" class="form-label">Şifre (Tekrar)</label>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              class="form-control {% if field_errors.password2 %}is-invalid{% endif %}"
+              id="password2"
+              name="password2"
+              placeholder="Şifre (Tekrar)"
+              required
+              minlength="6"
+            />
+            <span class="toggle-password" id="togglePasswordReg2">Göster</span>
+          </div>
+          <div class="invalid-feedback">{% if field_errors.password2 %}{{ field_errors.password2 }}{% endif %}</div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-login">Kayıt Ol</button>
+      </form>
+
+      <div class="bottom-text">Zaten hesabın var mı? <a href="{% url 'login' %}" class="register-link">Giriş yap</a></div>
+    </div>
+  </div>
+
+  <script>
+    const regForm = document.getElementById('register-form');
+
+    function getFeedback(input) {
+      const group = input.closest('.mb-3');
+      return group ? group.querySelector('.invalid-feedback') : null;
+    }
+
+    function markInvalid(input, message) {
+      input.classList.add('is-invalid');
+      const feedback = getFeedback(input);
+      if (feedback) {
+        feedback.textContent = message;
+        feedback.style.display = 'block';
+      }
+    }
+
+    function clearInvalid(input) {
+      input.classList.remove('is-invalid');
+      const feedback = getFeedback(input);
+      if (feedback) {
+        // always hide feedback as soon as the user interacts with the field
+        feedback.style.display = 'none';
+      }
+    }
+
+    regForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+      // clear previous state
+      regForm.querySelectorAll('.is-invalid').forEach(i => i.classList.remove('is-invalid'));
+      regForm.querySelectorAll('.invalid-feedback').forEach(f => { f.style.display = 'none'; });
+
+      const firstName = document.getElementById('first_name');
+      const email = document.getElementById('email');
+      const password = document.getElementById('password');
+      const password2 = document.getElementById('password2');
+
+      let hasError = false;
+
+      if (!firstName.value.trim()) {
+        markInvalid(firstName, 'İsim boş bırakılamaz.');
+        hasError = true;
+      }
+
+      if (!email.value.trim()) {
+        markInvalid(email, 'E-posta boş bırakılamaz.');
+        hasError = true;
+      } else {
+        // simple email format check
+        const emailRe = /\S+@\S+\.\S+/;
+        if (!emailRe.test(email.value.trim())) {
+          markInvalid(email, 'Lütfen geçerli bir e-posta girin.');
+          hasError = true;
+        }
+      }
+
+      if (!password.value) {
+        markInvalid(password, 'Şifre boş bırakılamaz.');
+        hasError = true;
+      } else if (password.value.length < 6) {
+        markInvalid(password, 'Şifre en az 6 karakter olmalıdır.');
+        hasError = true;
+      }
+
+      if (!password2.value) {
+        markInvalid(password2, 'Şifre (Tekrar) boş bırakılamaz.');
+        hasError = true;
+      } else if (password.value && password2.value && password.value !== password2.value) {
+        markInvalid(password2, 'Şifreler eşleşmiyor.');
+        hasError = true;
+      }
+
+      if (hasError) {
+        // add visual validation marker
+        regForm.classList.add('was-validated');
+        // focus first invalid
+        const firstInvalid = regForm.querySelector('.is-invalid');
+        if (firstInvalid) firstInvalid.focus();
+        return;
+      }
+
+      // all good — submit
+      regForm.submit();
+    });
+
+    // Clear invalid state on input/focus and hide server alerts
+    const regInputs = regForm.querySelectorAll('input');
+    regInputs.forEach(input => {
+      input.addEventListener('input', () => {
+        clearInvalid(input);
+        const serverAlerts = document.querySelectorAll('.server-alert');
+        serverAlerts.forEach(a => { a.style.display = 'none'; });
+      });
+
+      input.addEventListener('focus', () => {
+        // hide feedback immediately on focus so the field looks neutral
+        clearInvalid(input);
+        const serverAlerts = document.querySelectorAll('.server-alert');
+        serverAlerts.forEach(a => { a.style.display = 'none'; });
+      });
+    });
+
+    // Toggle password visibility for register form
+    const toggleReg = document.getElementById('togglePasswordReg');
+    const toggleReg2 = document.getElementById('togglePasswordReg2');
+    const passReg = document.getElementById('password');
+    const passReg2 = document.getElementById('password2');
+
+    if (toggleReg && passReg) {
+      toggleReg.addEventListener('click', () => {
+        const type = passReg.getAttribute('type') === 'password' ? 'text' : 'password';
+        passReg.setAttribute('type', type);
+        toggleReg.textContent = type === 'password' ? 'Göster' : 'Gizle';
+      });
+    }
+
+    if (toggleReg2 && passReg2) {
+      toggleReg2.addEventListener('click', () => {
+        const type = passReg2.getAttribute('type') === 'password' ? 'text' : 'password';
+        passReg2.setAttribute('type', type);
+        toggleReg2.textContent = type === 'password' ? 'Göster' : 'Gizle';
+      });
+    }
+  </script>
+  
+</body>
+</html>

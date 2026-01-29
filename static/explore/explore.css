@@ -1,0 +1,179 @@
+:root{
+  --bg:#050816;
+  --card:#0b1220;
+  --muted:#64748b;
+  --text:#e5e7eb;
+  --primary:#3b82f6;
+}
+*{box-sizing:border-box}
+body.explore-page{min-height:100vh;background:radial-gradient(circle at top,#111827 0,#020617 60%);color:var(--text);font-family:Poppins,system-ui,Segoe UI;}
+.explore-header{display:flex;align-items:center;gap:20px;padding:18px;justify-content:center}
+
+/* Search wrapper spacing: keep search centered and below the top-nav */
+.explore-search-wrap{
+  display:flex;
+  justify-content:center;
+  padding:18px 12px;
+  margin-top:80px; /* space below navbar */
+  margin-bottom:16px;
+  position:relative;
+  z-index:2;
+}
+.brand{position:fixed;left:18px;top:14px;display:flex;align-items:center;gap:10px}
+.brand-icon{width:40px;height:40px;border-radius:8px;background:linear-gradient(180deg,var(--primary),#1d4ed8);display:flex;align-items:center;justify-content:center}
+.search-wrap{max-width:720px;width:100%;display:flex;gap:8px}
+.search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:rgba(2,6,23,0.6);color:var(--text);box-sizing:border-box}
+.btn.btn-primary{background:var(--primary);border:0;padding:10px 14px;border-radius:12px;color:white}
+.explore-main{display:flex;gap:18px;padding:20px;max-width:1200px;margin:0 auto}
+.filters{width:220px;flex:0 0 220px;display:flex;flex-direction:column;gap:10px}
+.filters .form-control{padding:6px 10px;border-radius:8px;background:rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.02);color:var(--text);box-sizing:border-box;width:100%;max-width:100%}
+
+/* Keep filter container overflow visible so focus outlines are not clipped */
+.filters{overflow:visible}
+
+/* Keep search input dark on focus; show only blue outline */
+.search-input:focus, .search-input:focus-visible{
+  background-color: rgba(2,6,23,0.6);
+  color: var(--text);
+  outline: 2px solid var(--primary);
+  border-color: var(--primary);
+  box-shadow: none;
+}
+.content{flex:1}
+.showcase{margin-bottom:18px}
+/* Make carousels static, responsive grids (override any inline styles from template) */
+.row-carousel {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* mobile default */
+  gap: 12px !important;
+  overflow: visible !important;
+  padding: 8px 4px;
+  cursor: default !important;
+  user-select: none;
+}
+.row-carousel .card.small{ width: 100% !important; max-width: 100% !important; min-width: 0 !important; background:var(--card); padding:8px; border-radius:10px; display:flex; flex-direction:column; align-items:center; gap:8px }
+.results .grid{ display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap:14px !important }
+
+/* Card layout: vertical flex container so poster sits on top and title below */
+.card{
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 8px;
+  text-decoration: none;
+  color: var(--text);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Make cards appear clickable on Explore pages */
+.explore-page .card { cursor: pointer; }
+
+/* Responsive columns: 2 -> 3 -> 4 -> 6 depending on viewport width */
+@media (min-width: 600px) {
+  .row-carousel { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+  .results .grid { grid-template-columns: repeat(3, minmax(0,1fr)) !important; }
+}
+@media (min-width: 900px) {
+  .row-carousel { grid-template-columns: repeat(4, minmax(0,1fr)) !important; }
+  .results .grid { grid-template-columns: repeat(4, minmax(0,1fr)) !important; }
+}
+@media (min-width: 1200px) {
+  .row-carousel { grid-template-columns: repeat(6, minmax(0,1fr)) !important; }
+  .results .grid { grid-template-columns: repeat(6, minmax(0,1fr)) !important; }
+}
+
+/* Poster area: fixed visual region with a 2:3 aspect ratio and a fallback height */
+.card .poster{
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 8px;
+  overflow: hidden; /* image cannot overflow the poster area */
+  background-color: #0b1220;
+  display: block;
+}
+
+/* Fallback for browsers without aspect-ratio support */
+@supports not (aspect-ratio: 1 / 1){
+  .card .poster{ height: 220px; }
+}
+
+.card .poster img.poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* cover the poster box without distortion */
+  display: block;
+  border-radius: 8px;
+  /* allow pointer events to pass through the image so carousel receives them */
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+.row-carousel:active{ cursor: default !important; }
+
+/* Make cards show pointer when hover to indicate clickability */
+.row-carousel .card, .results .card { cursor: pointer; }
+
+/* Title area: keep it small and prevent layout break from long titles */
+.card .title{
+  font-weight: 600;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card .year{color:var(--muted);font-size:12px;margin-top:4px}
+.pager{margin-top:12px;color:var(--muted)}
+
+/* Detail modal sizing and list select tweaks */
+.detail-modal .list-select-wrapper { width:100%; max-width:320px; }
+.detail-modal select.custom-list-select { width:100%; box-sizing:border-box; }
+.detail-modal .detail-modal-content { max-width:1100px; max-height:none; padding:24px; overflow:visible; }
+.detail-modal-footer { display:flex; justify-content:flex-end; gap:12px; margin-top:20px; }
+.detail-modal-close { cursor: pointer; }
+
+/* Layout for Durum / Puan / Özel liste */
+.detail-row { display:flex; gap:16px; align-items:flex-start; margin-top:12px; flex-wrap:wrap; }
+.detail-row .detail-field { display:flex; flex-direction:column; min-width:0; }
+.detail-row .detail-field:nth-child(1), .detail-row .detail-field:nth-child(2), .detail-row .detail-field:nth-child(3) { flex: 1 1 0; }
+.detail-row label { font-size:13px; margin-bottom:6px; color:var(--muted); }
+.detail-row input.form-control, .detail-row select.form-control { width:100%; }
+
+/* Disabled rating filter styling (when books have no ratings) */
+.filter-rating.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.filter-rating.disabled label {
+  color: #64748b;
+}
+
+.filter-rating.disabled select {
+  background-color: #020617;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* responsive */
+@media (max-width:900px){.explore-main{flex-direction:column}.filters{width:100%;flex:0 0 auto;order:2}.content{order:1}}
+
+/* Make the filters sidebar sticky on larger screens (kept separate from template) */
+@media (min-width: 900px) {
+  .filters {
+    position: sticky;
+    top: 80px; /* keep below header */
+    align-self: flex-start;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    z-index: 4;
+  }
+}

@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Profili Düzenle - Sosyal Kütüphanem</title>
+  <link rel="stylesheet" href="{% static 'accounts/register.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts/profile.css' %}">
+</head>
+<body class="register-page">
+  <div class="login-container">
+    <div class="brand-logo">
+      <div class="brand-icon">📚</div>
+      <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+    </div>
+
+    <div class="login-card">
+      <h1 class="login-title">Profili Düzenle</h1>
+
+      {% if messages %}
+        <div>
+          {% for message in messages %}
+            {# Show messages on the edit page (do not show profile-scoped messages intended for profile view) #}
+            {% if 'profile' not in message.tags %}
+              <div class="server-alert alert-{{ message.tags }}" role="alert">
+                <div class="alert-icon">!</div>
+                <div class="alert-body">{{ message }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="mb-3 input-wrapper">
+          <label class="form-label">İsim</label>
+          {{ form.display_name }}
+          {% if form.display_name.errors %}
+            <div class="invalid-feedback">{{ form.display_name.errors|join:" " }}</div>
+          {% endif %}
+        </div>
+        <div class="mb-3 input-wrapper">
+          <label class="form-label">Biyografi</label>
+          {{ form.bio }}
+          {% if form.bio.errors %}
+            <div class="invalid-feedback">{{ form.bio.errors|join:" " }}</div>
+          {% endif %}
+        </div>
+        <div class="mb-3 input-wrapper">
+          <label class="form-label">Avatar (isteğe bağlı)</label>
+          {{ form.avatar }}
+          {% if form.avatar.errors %}
+            <div class="invalid-feedback">{{ form.avatar.errors|join:" " }}</div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-login">Değişiklikleri Kaydet</button>
+      </form>
+
+      <div class="bottom-text"><a href="{% url 'public_profile' username=profile_user.username %}">Profili Görüntüle</a></div>
+    </div>
+  </div>
+</body>
+</html>

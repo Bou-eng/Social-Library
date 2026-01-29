@@ -1,0 +1,311 @@
+:root {
+      --bg-main: #050816;
+      --bg-card: #0b1220;
+      --bg-input: #020617;
+      --border-input: #1e293b;
+      --text-main: #e5e7eb;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --accent: #22c55e;
+    }
+
+    /* Decorative font for brand to match other pages */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background: radial-gradient(circle at top, #111827 0, #020617 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      color: var(--text-main);
+      padding: 16px; /* mobilde biraz nefes alanı */
+    }
+
+    /* ÜST SOL LOGO - YENİ */
+
+    .brand-logo {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: flex-start;
+      z-index: 1000;
+      background: transparent;
+      padding: 4px 6px;
+      border-radius: 8px;
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 20% 20%, var(--primary), #1d4ed8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 10px 26px rgba(59, 130, 246, 0.45);
+    }
+
+    .brand-text {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: #f9fafb;
+      line-height: 1;
+      text-shadow: 0 0 6px rgba(15, 23, 42, 0.6);
+      display: inline-block;
+    }
+
+    .brand-text .line1{display:block;font-size:14px;font-weight:600}
+    .brand-text .line2{display:block;font-size:18px;font-weight:800;margin-top:2px}
+
+    .login-container {
+      max-width: 380px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 8px;
+    }
+
+    /* keep some top spacing so fixed logo doesn't overlap centered card */
+    body {
+      padding-top: 18px;
+    }
+
+    .login-card {
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 18px;
+      padding: 26px 20px 22px;
+      box-shadow:
+        0 18px 36px rgba(15, 23, 42, 0.85),
+        0 0 0 1px rgba(148, 163, 184, 0.06);
+      backdrop-filter: blur(8px);
+      width: 100%;
+      max-width: 380px;
+    }
+
+    .login-title {
+      font-weight: 700;
+      font-size: 22px;
+      text-align: center;
+      margin-bottom: 18px;
+      color: #f9fafb;
+    }
+
+    /* Server-side alert (Django messages / form non-field errors) */
+    .server-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
+      color: #f8d7da; /* default danger-ish */
+    }
+
+    .server-alert .alert-icon {
+      flex: 0 0 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(220,38,38,0.12);
+      color: #ffb4b4;
+      font-weight: 700;
+    }
+
+    .server-alert .alert-body {
+      flex: 1 1 auto;
+      color: #ffdede;
+    }
+
+    /* friendly color variants using Bootstrap-like tags */
+    .server-alert.alert-success { background: rgba(16,185,129,0.06); color: #b7f5d6; }
+    .server-alert.alert-success .alert-icon { background: rgba(16,185,129,0.12); color: #0ea56b; }
+    .server-alert.alert-danger  { background: rgba(220,38,38,0.06); color: #ffdede; }
+    .server-alert.alert-danger  .alert-icon { background: rgba(220,38,38,0.12); color: #ffb4b4; }
+    .server-alert.alert-warning { background: rgba(245,158,11,0.06); color: #ffefcf; }
+    .server-alert.alert-info    { background: rgba(59,130,246,0.06); color: #dbeaff; }
+
+    .form-label {
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .form-control {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-input);
+      color: var(--text-main);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+    }
+
+    .form-control::placeholder {
+      color: #4b5563;
+    }
+
+    .form-control:focus {
+      background-color: var(--bg-input);
+      color: var(--text-main);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4);
+    }
+
+    .form-check-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .forgot-link,
+    .register-link {
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .forgot-link:hover,
+    .register-link:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+
+    .btn-login {
+      width: 100%;
+      border-radius: 12px;
+      background: var(--primary);
+      border: none;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 10px 0;
+    }
+
+    .btn-login:hover {
+      background: var(--primary-hover);
+    }
+
+    .bottom-text {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .is-invalid + .invalid-feedback {
+      display: block;
+    }
+
+    /* RESPONSIVE AYARLAR */
+
+    /* Küçük ekranlar (telefon) */
+    @media (max-width: 576px) {
+      body {
+        align-items: flex-start;
+        padding-top: 90px; /* logo için yer bırak */
+      }
+
+      .login-container {
+        max-width: 100%;
+      }
+
+      .login-card {
+        padding: 24px 20px 20px;
+        border-radius: 18px;
+      }
+
+      .login-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+
+      .brand-logo {
+        top: 12px;
+        left: 12px;
+        padding: 3px 6px;
+      }
+
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+      }
+
+      .brand-text {
+        font-size: 14px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .brand-icon {
+        width: 44px;
+        height: 44px;
+        font-size: 22px;
+      }
+
+      .brand-text {
+        font-size: 20px;
+      }
+    }
+
+    /* Orta ekranlar (tablet) */
+    @media (min-width: 577px) and (max-width: 991px) {
+      body {
+        padding: 32px;
+      }
+
+      .login-card {
+        padding: 32px 28px 24px;
+      }
+
+      .brand-logo {
+        top: 24px;
+        left: 24px;
+      }
+    }
+
+    /* Daha büyük ekranlar için ufak iyileştirme */
+    @media (min-width: 992px) {
+      .login-card {
+        padding: 40px 40px 32px;
+      }
+
+      .login-title {
+        font-size: 28px;
+      }
+
+      .brand-logo {
+        top: 24px;
+        left: 32px;
+      }
+    }

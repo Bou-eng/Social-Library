@@ -1,0 +1,192 @@
+    <!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Giriş Yap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Google Fonts - YENİ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  {% load static %}
+  <!-- Local styles -->
+  <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+</head>
+<body>
+  <div class="login-container">
+    <!-- LOGO -->
+    <div class="brand-logo">
+      <div class="brand-icon">📚</div>
+      <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+    </div>
+
+    <div class="login-card">
+      <h1 class="login-title">Giriş Yap</h1>
+
+      {% if messages %}
+        <div>
+          {% for message in messages %}
+            {# Only show messages that are not profile/password scoped here #}
+            {% if 'profile' not in message.tags and 'password' not in message.tags %}
+              <div class="server-alert alert-{{ message.tags }}" role="alert">
+                <div class="alert-icon">!</div>
+                <div class="alert-body">{{ message }}</div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form
+          id="login-form"
+          method="POST"
+          action="{% url 'login' %}"
+          novalidate
+        >
+        {% csrf_token %}
+
+        <!-- E-posta -->
+        <div class="mb-3">
+          <label for="email" class="form-label">E-posta</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="example@example.com"
+            required
+          />
+          <div class="invalid-feedback">Lütfen geçerli bir e-posta girin.</div>
+        </div>
+
+        <!-- Şifre -->
+        <div class="mb-3">
+          <label for="password" class="form-label">Şifre</label>
+          <div class="password-wrapper">
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Example234."
+              required
+              minlength="6"
+            />
+            <span class="toggle-password" id="togglePassword">Göster</span>
+          </div>
+          <div class="invalid-feedback">Lütfen şifrenizi girin.</div>
+        </div>
+
+        <!-- Remember + Forgot -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value="1"
+              id="remember"
+              name="remember"
+            />
+            <label class="form-check-label" for="remember">
+              Beni hatırla
+            </label>
+          </div>
+          <a href="{% url 'password_reset' %} " class="forgot-link">Şifremi unuttum?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary btn-login">
+          Giriş Yap
+        </button>
+      </form>
+
+      <div class="bottom-text">
+        Hesabın yok mu?
+        <a href="{% url 'register' %}" class="register-link">Kayıt ol</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (opsiyonel) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const form = document.getElementById("login-form");
+
+    form.addEventListener("submit", function (event) {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
+      form.classList.add("was-validated");
+      // If the form is valid, we do NOT preventDefault → it will go to Django
+    });
+
+
+    const passwordInput = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("click", () => {
+      const type =
+        passwordInput.getAttribute("type") === "password"
+          ? "text"
+          : "password";
+      passwordInput.setAttribute("type", type);
+
+      togglePassword.textContent = type === "password" ? "Göster" : "Gizle";
+    });
+
+    // Remove invalid styling/feedback as soon as the user types
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        // Remove overall validation UI so the field returns to neutral while user types
+        if (form.classList.contains('was-validated')) {
+          form.classList.remove('was-validated');
+        }
+
+        // If the input was marked invalid, clear the invalid class so red outline/icon hides
+        if (input.classList.contains('is-invalid')) {
+          input.classList.remove('is-invalid');
+        }
+
+        // Hide any visible invalid-feedback for this input once the user types
+        const feedback = input.parentElement.querySelector('.invalid-feedback');
+        if (feedback) {
+          if (input.value && input.value.length > 0) {
+            feedback.style.display = 'none';
+          } else {
+            feedback.style.display = '';
+          }
+        }
+
+        // Also hide any server-side alert (Django messages) when user starts typing
+        const serverAlerts = document.querySelectorAll('.server-alert');
+        serverAlerts.forEach(a => { a.style.display = 'none'; });
+      });
+
+      // also clear invalid state on focus so user sees a neutral field when they start editing
+      input.addEventListener('focus', () => {
+        if (form.classList.contains('was-validated')) form.classList.remove('was-validated');
+        if (input.classList.contains('is-invalid')) input.classList.remove('is-invalid');
+        // hide server-side alerts on focus as well
+        const serverAlerts = document.querySelectorAll('.server-alert');
+        serverAlerts.forEach(a => { a.style.display = 'none'; });
+      });
+    });
+  </script>
+  
+</body>
+</html>

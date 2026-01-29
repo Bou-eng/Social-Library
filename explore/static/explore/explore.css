@@ -1,0 +1,116 @@
+:root{
+  --bg:#050816;
+  --card:#0b1220;
+  --muted:#64748b;
+  --text:#e5e7eb;
+  --primary:#3b82f6;
+}
+*{box-sizing:border-box}
+.explore-page{min-height:100vh;background:radial-gradient(circle at top,#111827 0,#020617 60%);color:var(--text);font-family:Poppins,system-ui,Segoe UI;}
+/* Prevent the whole page from producing a horizontal scrollbar while on Explore.
+  Carousels will still allow internal horizontal scrolling. This rule is scoped
+  to the Explore stylesheet so other pages are unaffected. */
+html, body { overflow-x: hidden; }
+
+/* Search wrapper centered and constrained to match page content spacing */
+.explore-search-wrap{
+  width:100%;
+  max-width:920px;
+  margin:88px auto 0;
+  padding:0 18px;
+  display:flex;
+  justify-content:center;
+  box-sizing:border-box;
+}
+.explore-header{display:flex;align-items:center;gap:20px;padding:18px;justify-content:center}
+.brand{position:fixed;left:18px;top:14px;display:flex;align-items:center;gap:10px}
+.brand-icon{width:40px;height:40px;border-radius:8px;background:linear-gradient(180deg,var(--primary),#1d4ed8);display:flex;align-items:center;justify-content:center}
+.search-wrap{max-width:720px;width:100%;display:flex;gap:8px}
+.search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:rgba(6,12,28,0.6);color:var(--text)}
+
+/* Ensure the top search input (which also has .form-control from bootstrap) matches the filters' dark field style */
+.explore-search-wrap .search-input.form-control {
+  background: rgba(6,12,28,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.explore-search-wrap .search-input.form-control::placeholder{ color: #9aa3b2; }
+.explore-search-wrap .search-input.form-control:focus{ outline:none; box-shadow:0 0 0 0.18rem rgba(59,130,246,0.18); border-color: var(--primary); background: rgba(6,12,28,0.72); }
+.btn.btn-primary{background:var(--primary);border:0;padding:10px 14px;border-radius:12px;color:white}
+.explore-main{display:flex;gap:18px;padding:20px;width:100%;max-width:100%;margin:0 auto;box-sizing:border-box}
+.filters{width:220px;flex:0 0 220px;display:flex;flex-direction:column;gap:10px}
+.filters .form-control{padding:8px 10px;border-radius:8px;background:rgba(6,12,28,0.6);border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+.filters .form-control:focus{outline:none;box-shadow:0 0 0 0.18rem rgba(59,130,246,0.18);border-color:var(--primary)}
+.search-input:focus{outline:none;box-shadow:0 0 0 0.18rem rgba(59,130,246,0.18);border-color:var(--primary)}
+.content{flex:1}
+.showcase{margin-bottom:28px}
+.row-carousel{display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;padding:8px 4px;cursor:grab;user-select:none}
+.row-carousel .card.small{background:var(--card);padding:8px;border-radius:10px;display:flex;flex-direction:column;align-items:stretch;gap:8px}
+.results .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+
+/* Make the base card a vertical flex container but do not force full width */
+.card{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  background:var(--card);
+  border-radius:12px;
+  padding:8px;
+  text-decoration:none;
+  color:var(--text);
+  overflow:hidden;
+  box-sizing:border-box;
+}
+
+/* Fixed card size for carousels so multiple cards fit horizontally */
+.row-carousel .card{
+  flex: 0 0 150px;
+  max-width: 150px;
+  min-width: 120px;
+}
+
+@media (min-width:1400px){ .row-carousel .card{ flex:0 0 160px; max-width:160px } }
+@media (max-width:1100px){ .row-carousel .card{ flex:0 0 140px; max-width:140px } }
+@media (max-width:700px){ .row-carousel .card{ flex:0 0 120px; max-width:120px } }
+
+/* Poster area: fixed box with fallback height */
+.card .poster{
+  width:100%;
+  aspect-ratio: 2 / 3;
+  border-radius:8px;
+  overflow:hidden;
+  background-color: #0b1220;
+  display:block;
+}
+@supports not (aspect-ratio: 1 / 1){ .card .poster{ height:220px } }
+
+.card .poster img{ width:100%; height:100%; object-fit:cover; display:block; border-radius:8px; pointer-events:none; -webkit-user-drag:none; user-drag:none }
+
+.card .title{ font-weight:600; margin-top:8px; font-size:14px; line-height:1.2; max-height:2.4em; overflow:hidden }
+.card .year{ color:var(--muted); font-size:12px; margin-top:4px }
+.pager{margin-top:12px;color:var(--muted)}
+
+/* responsive */
+@media (max-width:1200px){
+  .row-carousel .card.small{flex:0 0 calc((100% - 30px)/4);max-width:calc((100% - 30px)/4)}
+}
+@media (max-width:900px){
+  .row-carousel .card.small{flex:0 0 calc((100% - 20px)/3);max-width:calc((100% - 20px)/3)}
+  .explore-main{flex-direction:column}
+  .filters{width:100%;flex:0 0 auto;order:2}
+  .content{order:1}
+}
+
+/* Hide horizontal scrollbar but keep scrolling functional */
+.row-carousel{scrollbar-width:none;-ms-overflow-style:none;touch-action:pan-x;cursor:grab}
+.row-carousel::-webkit-scrollbar{height:0;display:none}
+.row-carousel:active{cursor:grabbing}
+.row-carousel.dragging { user-select: none; -webkit-user-select: none; }
+
+/* Center highlight / cover-flow effect */
+.row-carousel .card{transition:transform 260ms ease, opacity 260ms ease, filter 260ms ease}
+.row-carousel .card.dimmed{opacity:0.5;transform:scale(0.92);filter:brightness(0.85)}
+.row-carousel .card.center{opacity:1;transform:scale(1.03);filter:brightness(1)}
+
+/* Make scrolling smooth on touchpads and when programmatically scrolled */
+.row-carousel{scroll-behavior:smooth; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain}
