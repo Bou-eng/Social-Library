@@ -1,256 +1,327 @@
-📚 Social Library
+# 📚 Social Library
 
-Social Library is a Django-based social media platform that combines movie & book discovery with personal libraries, reviews, and social interaction.
-Think of it as a hybrid between Goodreads, Letterboxd, and a social activity feed.
+![Django](https://img.shields.io/badge/Django-5.2-092E20?style=for-the-badge&logo=django)
+![Python](https://img.shields.io/badge/Python-Backend-3776AB?style=for-the-badge&logo=python)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-Frontend-7952B3?style=for-the-badge&logo=bootstrap)
+![TMDB](https://img.shields.io/badge/TMDB-Movie_API-01B4E4?style=for-the-badge)
 
-Users can explore movies and books, track what they’ve watched or read, rate content, create custom lists, follow other users, and interact through likes, comments, and notifications.
+**Social Library** is a Django-based social media platform for discovering, tracking, reviewing, and sharing movies and books.
 
-🚀 Features
-🔍 Media Exploration
+It combines ideas from **Goodreads**, **Letterboxd**, and a social activity feed. Users can explore media, build personal libraries, create custom lists, follow others, and interact through likes, comments, and notifications.
 
-Browse movies and books via TMDB and Open Library APIs
+---
 
-Responsive multi-column grid layout (carousel removed)
+## 📌 Overview
 
-Poster images optimized using object-fit: cover and overflow: hidden
+Social Library allows users to:
 
-🧠 Search & Filter System
+- Discover movies and books
+- Track watched, read, and planned content
+- Rate media from 1 to 10
+- Create custom movie/book lists
+- Follow other users
+- Like and comment on activities
+- Receive notifications for social interactions
 
-Dynamic filtering by:
+---
 
-Genre
+## 🏗️ Tech Stack
 
-Release year (≥ selected year)
+| Layer | Technology |
+|---|---|
+| Backend | Python, Django 5.2 |
+| Database | SQLite3 |
+| Frontend | Django Templates, HTML, CSS, JavaScript |
+| UI Framework | Bootstrap |
+| Movie API | TMDB API |
+| Book API | Open Library API |
+| Main JS File | `static/library/library.js` |
 
-Rating ranges (2–5, 5–7, 7+)
+---
 
-Rating input auto-disabled for books without rating data
+## 🧠 System Architecture
 
-🪟 Detailed Content Popup
+```mermaid
+flowchart LR
+    User[User] --> UI[Django Templates]
+    UI --> Views[Django Views]
+    Views --> DB[(SQLite Database)]
+    Views --> TMDB[TMDB API]
+    Views --> OpenLibrary[Open Library API]
+    DB --> Feed[Activity Feed]
+    DB --> Notifications[Notifications]
+```
 
-Clicking an explore card opens a rich detail popup with:
+---
 
-Large cover image
+## ✨ Core Features
 
-Summary description
+### 🔍 Media Exploration
 
-Year, genre, duration/page count
+Users can browse movies and books using external APIs.
 
-Status controls:
+| Feature | Description |
+|---|---|
+| Movie discovery | Powered by TMDB API |
+| Book discovery | Powered by Open Library API |
+| Layout | Responsive multi-column grid |
+| Images | Optimized with `object-fit: cover` and hidden overflow |
+| Carousel | Removed in favor of a cleaner grid system |
 
-Watched / To Watch
+---
 
-Read / To Read
+### 🧠 Search & Filter System
 
-Rating system (1–10)
+Users can dynamically filter content by:
 
-Add to custom lists
+| Filter | Description |
+|---|---|
+| Genre | Filter movies/books by category |
+| Release Year | Shows content from the selected year and newer |
+| Rating Range | Supports `2–5`, `5–7`, and `7+` |
+| Book Rating Handling | Rating input is disabled when book rating data is unavailable |
 
-Comment sub-popup
+---
 
-🧩 Technical Challenge
-Keeping popup state consistent after user actions.
+### 🪟 Content Detail Popup
 
-✅ Solution
-All interactions are stored in Activity and ActivityDetail models.
-Popup content is preloaded per user on open.
+Clicking a movie or book opens a detailed popup with:
 
-📂 User Library (Kütüphanem)
+- Large cover image
+- Summary description
+- Year, genre, and metadata
+- Duration or page count
+- Watch/read status controls
+- Rating system from 1 to 10
+- Add-to-list option
+- Comment popup
 
-Tabbed interface:
+---
 
-Watched
+## 📂 User Library
 
-To Watch
+The personal library page, **Kütüphanem**, uses a tabbed interface.
 
-Read
+| Tab | Description |
+|---|---|
+| Watched | Movies the user has watched |
+| To Watch | Movies the user wants to watch |
+| Read | Books the user has read |
+| To Read | Books the user wants to read |
+| Custom Lists | User-created collections |
 
-To Read
+---
 
-Custom Lists
-
-📝 Custom Lists
+## 📝 Custom Lists
 
 Users can:
 
-Create lists with emoji + name
+- Create lists with an emoji and name
+- Add movies and books to lists
+- View lists inside content popups
+- Keep movies and books organized separately
 
-Add movies/books
+---
 
-View lists inside popups
+## 📰 Activity Feed
 
-Maintain clean content separation
+The platform includes an Instagram/Facebook-style activity feed.
 
-🔔 Notifications System
+| Feature | Description |
+|---|---|
+| User Avatar | Shows user profile image with fallback |
+| Cover Image | Displays movie/book cover |
+| Activity Text | Shows activity title and summary |
+| Likes | Live like counter |
+| Comments | Expandable comment panel |
+| Logging | Centralized activity tracking |
 
-Homepage notification bell supports:
+---
 
-New followers
+## 🔔 Notifications
 
-Likes
+The homepage notification bell supports:
 
-Comments
+- New followers
+- Likes
+- Comments
 
-Fixed Issues
+### Fixed Notification Issues
 
-Bell rendering on wrong pages
+| Problem | Solution |
+|---|---|
+| Bell displayed on wrong pages | Conditional homepage rendering |
+| Duplicate avatar bug | Unified avatar fallback logic |
+| Dropdown conflicts | Improved dropdown positioning |
 
-Duplicate avatar bug
+---
 
-Dropdown positioning conflicts
+## 🧩 Technical Challenge
 
-📰 Activity Feed
+### Problem
 
-Instagram/Facebook-style feed displaying:
+Keeping popup state consistent after user actions such as rating, commenting, or adding content to a list.
 
-User avatar (with fallback)
+### Solution
 
-Cover image
+User interactions are stored in the `Activity` and `ActivityDetail` models. Popup data is preloaded per user when opened, keeping the interface consistent after each action.
 
-Activity title & summary
+---
 
-Live like counter
+## 🧱 Project Structure
 
-Comment panel
+### Django Apps
 
-Optimizations
+| App | Purpose |
+|---|---|
+| `accounts` | Authentication, profiles, follows, activities, library |
+| `explore` | Movie and book discovery |
+| `core` | External API clients |
 
-Unified avatar fallback logic
+### Key Models
 
-Centralized activity logging for real-time consistency
+| Model | Purpose |
+|---|---|
+| `User` | Default Django user model |
+| `Profile` | User profile information |
+| `Activity` | Main activity feed records |
+| `ActivityDetail` | Detailed activity metadata |
+| `LibraryItem` | Watched/read/to-watch/to-read items |
+| `CustomList` | User-created media lists |
+| `Follow` | User follow relationships |
+| `Notification` | Social notifications |
 
-🛠️ Technology Stack
-Backend
+---
 
-Python
+## 🚀 Getting Started
 
-Django 5.2
+### 1. Clone the Repository
 
-SQLite3 (development)
-
-Frontend
-
-Django Templates
-
-HTML / CSS
-
-JavaScript (static/library/library.js)
-
-Bootstrap
-
-External APIs
-
-TMDB API – Movie data
-
-Open Library API – Book data
-
-🧱 Project Architecture
-Apps
-
-accounts – Authentication, profiles, follows, activities, library
-
-explore – Movie & book discovery
-
-core – External API clients
-
-Key Models
-
-User (Django default)
-
-Profile
-
-Activity
-
-ActivityDetail
-
-LibraryItem
-
-CustomList
-
-Follow
-
-Notification
-
-⚙️ Installation & Setup
-1️⃣ Clone the Repository
+```bash
 git clone https://github.com/Bou-eng/social-library.git
 cd social-library
+```
 
-2️⃣ Create a Virtual Environment
+---
+
+### 2. Create a Virtual Environment
+
+```bash
 python -m venv venv
-
+```
 
 Activate it:
 
-Windows
+#### Windows
 
+```bash
 venv\Scripts\activate
+```
 
+#### macOS / Linux
 
-macOS / Linux
-
+```bash
 source venv/bin/activate
+```
 
-3️⃣ Install Django & Dependencies
+---
+
+### 3. Install Dependencies
+
+```bash
 pip install django
 pip install -r requirements.txt
+```
 
+If `requirements.txt` is missing, install the basic dependencies manually:
 
-If requirements.txt is missing:
-
+```bash
 pip install django requests
+```
 
-4️⃣ Run Database Migrations
+---
+
+### 4. Run Database Migrations
+
+```bash
 python manage.py migrate
+```
 
-5️⃣ Create a Superuser (Optional)
+---
+
+### 5. Create a Superuser
+
+```bash
 python manage.py createsuperuser
+```
 
-6️⃣ Run the Development Server
+> [!NOTE]  
+> This step is optional but recommended for accessing the Django admin panel.
+
+---
+
+### 6. Start the Development Server
+
+```bash
 python manage.py runserver
+```
 
+Open the project in your browser:
 
-Open your browser and go to:
-
+```text
 http://127.0.0.1:8000/
+```
 
-🌍 Development Notes
+---
 
-Language: Turkish (LANGUAGE_CODE = 'tr')
+## ⚙️ Development Notes
 
-Debug mode enabled
+| Setting | Value |
+|---|---|
+| Language | Turkish |
+| `LANGUAGE_CODE` | `tr` |
+| Debug Mode | Enabled |
+| Media Directory | `/media/` |
+| Local Email Testing | `smtp4dev` |
 
-Media files stored in /media/
+---
 
-Local email testing via smtp4dev
+## 🧪 Challenges & Solutions
 
-🧪 Known Challenges & Solutions
-Problem	Solution
-Duplicate avatars	Unified avatar rendering
-API images not visible	CSS fix with object-fit: cover
-Carousel drag issues	Replaced with responsive grid
-Broken notification bell	Conditional homepage rendering
-🔮 Future Improvements
+| Problem | Solution |
+|---|---|
+| Duplicate avatars | Unified avatar rendering |
+| API images not visible | CSS fix with `object-fit: cover` |
+| Carousel drag issues | Replaced carousel with responsive grid |
+| Broken notification bell | Conditional homepage rendering |
+| Popup state inconsistency | Preloaded user-specific popup data |
 
-Production-grade email service
+---
 
-Performance optimizations
+## 🔮 Future Improvements
 
-Recommendation system (ML-based)
+- Production-grade email service
+- Performance optimizations
+- ML-based recommendation system
+- User-to-user messaging
+- Real-time notifications
 
-User-to-user messaging
+---
 
-Real-time notifications
+## 📚 References
 
-📚 References
+- [Django Documentation](https://docs.djangoproject.com/)
+- [TMDB API Documentation](https://developer.themoviedb.org/docs)
+- [Open Library API Documentation](https://openlibrary.org/developers/api)
+- [Bootstrap Documentation](https://getbootstrap.com/docs/)
 
-Django Documentation
+---
 
-TMDB API Docs
+## 📄 License
 
-Open Library API Docs
+This project was developed for educational purposes.
 
-Bootstrap Documentation
 
 And here are some screenshots of the project:
 ![WhatsApp Image 2026-01-29 at 7 05 44 PM (15)](https://github.com/user-attachments/assets/e5f8d858-4ffd-4d4c-84a9-ae81be008516)
