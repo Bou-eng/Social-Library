@@ -4,38 +4,50 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.utils import timezone
 from django.core.mail import send_mail
 import random
+import json
 from .models import PasswordResetCode
-from datetime import timedelta
 from django.db import OperationalError as DjangoOperationalError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from .models import PasswordResetCode
-from .models import Profile, Activity, Follow, Notification
+from .models import (
+    Activity,
+    CustomList,
+    CustomListItem,
+    Follow,
+    LibraryItem,
+    Notification,
+    Profile,
+)
 from .forms import ProfileForm, DevPasswordChangeForm
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 
+
+def _json_user_id(request):
+    try:
+        data = json.loads(request.body.decode('utf-8') or '{}')
+        return int(data.get('user_id'))
+    except (TypeError, ValueError, json.JSONDecodeError, UnicodeDecodeError):
+        return None
+
+
 @login_required
 @require_POST
 def follow_user(request):
-    import json
-    data = json.loads(request.body)
-    user_id = data.get('user_id')
-    if not user_id or int(user_id) == request.user.id:
+    user_id = _json_user_id(request)
+    if not user_id or user_id == request.user.id:
         return JsonResponse({'success': False, 'error': 'Invalid user.'})
     User = get_user_model()
     try:
         target = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'User not found.'})
-    obj, created = Follow.objects.get_or_create(follower=request.user, following=target)
-    
+    _, created = Follow.objects.get_or_create(follower=request.user, following=target)
+
     # Create notification for the followed user
     if created:
         Notification.objects.create(
@@ -43,16 +55,14 @@ def follow_user(request):
             actor=request.user,
             notif_type='follow'
         )
-    
+
     return JsonResponse({'success': True, 'following': True})
 
 @login_required
 @require_POST
 def unfollow_user(request):
-    import json
-    data = json.loads(request.body)
-    user_id = data.get('user_id')
-    if not user_id or int(user_id) == request.user.id:
+    user_id = _json_user_id(request)
+    if not user_id or user_id == request.user.id:
         return JsonResponse({'success': False, 'error': 'Invalid user.'})
     User = get_user_model()
     try:
@@ -61,31 +71,12 @@ def unfollow_user(request):
         return JsonResponse({'success': False, 'error': 'User not found.'})
     Follow.objects.filter(follower=request.user, following=target).delete()
     return JsonResponse({'success': True, 'following': False})
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib.auth import logout
-from django.contrib import messages
-from django.contrib.auth.models import User
-from django.conf import settings
-from django.utils import timezone
-from django.core.mail import send_mail
-import random
-from .models import PasswordResetCode
-from datetime import timedelta
-from django.db import OperationalError as DjangoOperationalError
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
-from .models import PasswordResetCode
-from .models import Profile, Activity, Follow
-from .forms import ProfileForm, DevPasswordChangeForm
 
 
 def login_view(request):
     # if already authenticated, send to home
     if request.user.is_authenticated:
-        return redirect('home')                     
+        return redirect('home')
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -244,12 +235,8 @@ def public_profile_view(request, username):
 
 @login_required
 def library_view(request):
-    """Render the user's library page with dummy data for each tab.
-
-    This view prepares placeholder items so the frontend UI is ready.
-    """
+    """Render the current user's saved library items and custom lists."""
     user = request.user
-    from .models import LibraryItem, CustomList
     try:
         # Query real items from DB and serialize minimal fields for template
         watched_qs = LibraryItem.objects.filter(user=user, media_type='movie', status='watched').order_by('-added_at')
@@ -293,9 +280,6 @@ def library_view(request):
 
 @login_required
 def create_custom_list(request):
-    from django.http import JsonResponse
-    from .models import CustomList
-
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'POST required'}, status=405)
 
@@ -310,9 +294,6 @@ def create_custom_list(request):
 
 @login_required
 def delete_custom_list_item(request):
-    from django.http import JsonResponse
-    from .models import CustomListItem
-
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'POST required'}, status=405)
     item_pk = request.POST.get('item_pk')
@@ -328,9 +309,6 @@ def delete_custom_list_item(request):
 
 @login_required
 def delete_custom_list(request):
-    from django.http import JsonResponse
-    from .models import CustomList
-
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'POST required'}, status=405)
     list_pk = request.POST.get('list_pk')
@@ -346,9 +324,6 @@ def delete_custom_list(request):
 
 @login_required
 def delete_library_item(request):
-    from django.http import JsonResponse
-    from .models import LibraryItem
-
     if request.method != 'POST':
         return JsonResponse({'ok': False, 'error': 'POST required'}, status=405)
     item_pk = request.POST.get('item_pk')
@@ -364,9 +339,6 @@ def delete_library_item(request):
 
 @login_required
 def get_custom_list_items(request):
-    from django.http import JsonResponse
-    from .models import CustomList, CustomListItem
-
     list_id = request.GET.get('list_id')
     if not list_id:
         return JsonResponse({'ok': False, 'error': 'list_id required'}, status=400)

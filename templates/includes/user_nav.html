@@ -1,0 +1,29 @@
+<div class="user-profile">
+  {% if request.user.profile.avatar %}
+    <img class="nav-avatar" src="{{ request.user.profile.avatar.url }}" alt="">
+  {% else %}
+    <div class="avatar-fallback">
+      {% if request.user.profile.display_name %}
+        {{ request.user.profile.display_name|slice:":1"|upper }}
+      {% elif request.user.first_name %}
+        {{ request.user.first_name|slice:":1"|upper }}
+      {% else %}
+        {{ request.user.username|slice:":1"|upper }}
+      {% endif %}
+    </div>
+  {% endif %}
+  <a class="nav-username" href="{% url 'profile' %}">
+    {% if request.user.profile.display_name %}
+      {{ request.user.profile.display_name }}
+    {% elif request.user.first_name %}
+      {{ request.user.first_name }}
+    {% else %}
+      {{ request.user.username }}
+    {% endif %}
+  </a>
+  <div class="avatar-menu">
+    <a class="menu-item" href="{% url 'profile' %}">Profil</a>
+    <a class="menu-item" href="{% url 'password_change' %}">Şifre</a>
+    <a class="menu-item" href="{% url 'logout' %}">Çıkış</a>
+  </div>
+</div>

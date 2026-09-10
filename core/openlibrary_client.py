@@ -1,14 +1,15 @@
-"""Simple Open Library client for subject-based popular books.
+"""Open Library client for subject-based popular books.
 
 Provides:
 - fetch_openlibrary(url, params=None)
 - normalize_book_from_subject(work)
 - get_popular_books(subject='fiction', limit=20)
 
-This is intentionally small and prints debug info during development.
 """
+import logging
 import requests
 
+logger = logging.getLogger(__name__)
 OPENLIBRARY_BASE_URL = 'https://openlibrary.org'
 REQUEST_TIMEOUT = 5
 
@@ -17,15 +18,15 @@ def fetch_openlibrary(url, params=None):
     try:
         resp = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
     except Exception as e:
-        print(f"[openlib] Request error: {e}")
+        logger.warning("Open Library request failed: %s", e)
         return {}
     if resp.status_code != 200:
-        print(f"[openlib] Non-200 response for {resp.url}: {resp.status_code} - {resp.text}")
+        logger.warning("Open Library returned %s for %s", resp.status_code, resp.url)
         return {}
     try:
         return resp.json()
     except Exception as e:
-        print(f"[openlib] JSON decode error for {resp.url}: {e}")
+        logger.warning("Could not decode Open Library response for %s: %s", resp.url, e)
         return {}
 
 
@@ -51,12 +52,6 @@ def get_popular_books(subject='fiction', limit=20):
     data = fetch_openlibrary(url, params={'limit': limit})
     works = data.get('works', []) if isinstance(data, dict) else []
     books = [normalize_book_from_subject(w) for w in works[:limit] if normalize_book_from_subject(w)]
-    print('Popular books count:', len(books))
-    if books:
-        try:
-            print('Sample book cover:', books[0].get('cover_url'))
-        except Exception:
-            pass
     return books
 
 
@@ -111,7 +106,6 @@ def search_books(query, limit=20, start_index=None, max_results=None):
         docs_slice = docs[:limit]
 
     books = [normalize_book_from_search(d) for d in docs_slice if normalize_book_from_search(d)]
-    print(f"OpenLibrary search '{query}' returned {len(books)} books")
     return books
 
 

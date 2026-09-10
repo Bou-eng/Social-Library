@@ -30,7 +30,7 @@ Social Library allows users to:
 
 | Layer | Technology |
 |---|---|
-| Backend | Python, Django 5.2 |
+| Backend | Python, Django 4.2 LTS / 5.2 |
 | Database | SQLite3 |
 | Frontend | Django Templates, HTML, CSS, JavaScript |
 | UI Framework | Bootstrap |
@@ -230,15 +230,17 @@ source venv/bin/activate
 ### 3. Install Dependencies
 
 ```bash
-pip install django
 pip install -r requirements.txt
 ```
 
-If `requirements.txt` is missing, install the basic dependencies manually:
+Optional: configure local environment variables for secrets and external APIs:
 
 ```bash
-pip install django requests
+cp .env.example .env
+export $(grep -v '^#' .env | xargs)
 ```
+
+Set `TMDB_API_KEY` in `.env` or in your shell if you want movie discovery data from TMDB.
 
 ---
 
@@ -256,7 +258,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > This step is optional but recommended for accessing the Django admin panel.
 
 ---
@@ -344,4 +346,3 @@ And here are some screenshots of the project:
 ![WhatsApp Image 2026-01-29 at 7 05 43 PM (6)](https://github.com/user-attachments/assets/8092413a-0cec-4f79-9828-5ab44bfee3c2)
 ![WhatsApp Image 2026-01-29 at 7 05 43 PM (5)](https://github.com/user-attachments/assets/e58e96f1-1fb1-4dab-9a1b-3b3d55c32622)
 ![WhatsApp Image 2026-01-29 at 7 05 44 PM](https://github.com/user-attachments/assets/89cee75d-d11a-4b62-bd65-8e350c8a6150)
-

@@ -1,0 +1,163 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Kütüphanem - Sosyal Kütüphanem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'library/library.css' %}">
+</head>
+<body class="library-page">
+  <header class="top-nav">
+    <div class="brand-logo">
+      <div class="brand-icon">📚</div>
+      <div>
+        <strong>Sosyal</strong><br>
+        <strong>Kütüphanem</strong>
+      </div>
+    </div>
+    <nav class="nav-center" aria-label="Ana menü">
+      <a class="nav-link" href="{% url 'home' %}">Anasayfa</a>
+      <a class="nav-link" href="{% url 'explore:explore' %}">Keşfet</a>
+      <a class="nav-link active" href="{% url 'library' %}">Kütüphanem</a>
+    </nav>
+    <div class="nav-right">
+      {% include "includes/user_nav.html" %}
+    </div>
+  </header>
+
+  <main class="library-main">
+    <div class="tabs" role="tablist" aria-label="Kütüphane bölümleri">
+      <button class="tab-btn active" type="button" data-tab="watched">İzlediklerim</button>
+      <button class="tab-btn" type="button" data-tab="to-watch">İzlenecekler</button>
+      <button class="tab-btn" type="button" data-tab="read">Okuduklarım</button>
+      <button class="tab-btn" type="button" data-tab="to-read">Okunacaklar</button>
+      <button class="tab-btn" type="button" data-tab="custom-lists">Listeler</button>
+    </div>
+
+    <div class="tab-contents">
+      <section id="watched" class="tab-content">
+        <div class="library-grid">
+          {% for item in watched %}
+            <article class="card library-card" data-item-pk="{{ item.pk }}">
+              <button class="btn-delete delete-overlay" type="button" aria-label="Sil">Sil</button>
+              <div class="poster">
+                {% if item.poster_url %}<img class="poster-img" src="{{ item.poster_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">🎬</div>{% endif %}
+              </div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating }}/10{% endif %}</div>
+            </article>
+          {% empty %}
+            <p>Henüz izlenen film yok.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="to-watch" class="tab-content hidden">
+        <div class="library-grid">
+          {% for item in to_watch %}
+            <article class="card library-card" data-item-pk="{{ item.pk }}">
+              <button class="btn-delete delete-overlay" type="button" aria-label="Sil">Sil</button>
+              <div class="poster">
+                {% if item.poster_url %}<img class="poster-img" src="{{ item.poster_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">🎬</div>{% endif %}
+              </div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating }}/10{% endif %}</div>
+            </article>
+          {% empty %}
+            <p>Henüz izlenecek film yok.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="read" class="tab-content hidden">
+        <div class="library-grid">
+          {% for item in read %}
+            <article class="card library-card" data-item-pk="{{ item.pk }}">
+              <button class="btn-delete delete-overlay" type="button" aria-label="Sil">Sil</button>
+              <div class="poster">
+                {% if item.cover_url %}<img class="poster-img" src="{{ item.cover_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">📘</div>{% endif %}
+              </div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating }}/10{% endif %}</div>
+            </article>
+          {% empty %}
+            <p>Henüz okunan kitap yok.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="to-read" class="tab-content hidden">
+        <div class="library-grid">
+          {% for item in to_read %}
+            <article class="card library-card" data-item-pk="{{ item.pk }}">
+              <button class="btn-delete delete-overlay" type="button" aria-label="Sil">Sil</button>
+              <div class="poster">
+                {% if item.cover_url %}<img class="poster-img" src="{{ item.cover_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">📘</div>{% endif %}
+              </div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating }}/10{% endif %}</div>
+            </article>
+          {% empty %}
+            <p>Henüz okunacak kitap yok.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section id="custom-lists" class="tab-content hidden">
+        <div class="library-grid custom-lists-grid">
+          <button id="create-list-card" class="card plus-card" type="button">
+            <div class="poster"><div class="poster-plus">+</div></div>
+            <div class="title">Yeni Liste</div>
+            <div class="year">Film ve kitapları grupla</div>
+          </button>
+          {% for list in custom_lists %}
+            <article class="card library-card custom-list-card" data-list-id="{{ list.id }}">
+              <div class="poster"><div class="poster-fallback large-emoji">{{ list.emoji|default:"📚" }}</div></div>
+              <div class="title">{{ list.name }}</div>
+              <div class="year">{{ list.items.count }} öğe</div>
+            </article>
+          {% endfor %}
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="createListModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="create-list-title">
+    <div class="modal-card">
+      <button class="modal-close" type="button" aria-label="Kapat">×</button>
+      <div class="modal-icon">+</div>
+      <h2 id="create-list-title">Yeni Liste</h2>
+      <input id="new-list-name" class="form-control" type="text" placeholder="Liste adı">
+      <div class="emoji-picker" aria-label="Emoji seç">
+        <button class="emoji-option" type="button">🎬</button>
+        <button class="emoji-option" type="button">📚</button>
+        <button class="emoji-option" type="button">⭐</button>
+        <button class="emoji-option" type="button">🔥</button>
+        <button class="emoji-option" type="button">💙</button>
+      </div>
+      <div class="modal-actions">
+        <button id="create-list-cancel" class="btn btn-secondary" type="button">İptal</button>
+        <button id="create-list-confirm" class="btn btn-primary" type="button">Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="listDetailModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="list-detail-title">
+    <div class="modal-card large">
+      <button class="modal-close" type="button" aria-label="Kapat">×</button>
+      <h2 id="list-detail-title">Liste</h2>
+      <div id="list-detail-grid" class="library-grid"></div>
+      <div class="modal-actions">
+        <button id="delete-list-confirm" class="btn-delete" type="button">Listeyi Sil</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'library/library.js' %}"></script>
+</body>
+</html>

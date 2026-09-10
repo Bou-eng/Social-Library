@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Erişim Reddedildi - Sosyal Kütüphanem</title>
+  <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+</head>
+<body>
+  <div class="login-container">
+    <div class="brand-logo">
+      <div class="brand-icon">📚</div>
+      <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+    </div>
+    <div class="login-card">
+      <h1 class="login-title">Erişim Reddedildi</h1>
+      <p class="bottom-text">Bu sayfaya erişim izniniz yok.</p>
+      <a class="btn btn-primary btn-login" href="{% url 'home' %}">Anasayfaya Dön</a>
+    </div>
+  </div>
+</body>
+</html>

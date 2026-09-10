@@ -1,0 +1,301 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Anasayfa - Sosyal Kütüphanem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/home.css' %}">
+</head>
+<body class="feed-page">
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-logo">
+        <div class="brand-icon">📚</div>
+        <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+      </div>
+    </div>
+    <nav class="nav-center nav-items" aria-label="Ana menü">
+      <a class="nav-link active" href="{% url 'home' %}">Anasayfa</a>
+      <a class="nav-link" href="{% url 'explore:explore' %}">Keşfet</a>
+      <a class="nav-link" href="{% url 'library' %}">Kütüphanem</a>
+    </nav>
+    <div class="nav-right user-area">
+      <div id="notificationBell" class="notification-bell" role="button" tabindex="0" aria-label="Bildirimler">
+        <span class="bell-icon">🔔</span>
+        {% if unread_count %}<span id="notificationBadge" class="notification-badge">{{ unread_count }}</span>{% endif %}
+        <div id="notificationDropdown" class="notification-dropdown" aria-hidden="true">
+          <div class="notification-header">Bildirimler</div>
+          <div class="notification-list">
+            {% for notification in notifications %}
+              <div class="notification-item {% if not notification.is_seen %}unread{% endif %}">
+                <div class="notif-avatar">
+                  {% if notification.actor.profile.avatar %}
+                    <img src="{{ notification.actor.profile.avatar.url }}" alt="">
+                  {% else %}
+                    <img src="{% static 'accounts/avatar-placeholder.svg' %}" alt="">
+                  {% endif %}
+                </div>
+                <div class="notif-content">
+                  <div class="notif-text">
+                    <strong>
+                      {% if notification.actor.profile.display_name %}
+                        {{ notification.actor.profile.display_name }}
+                      {% elif notification.actor.first_name %}
+                        {{ notification.actor.first_name }}
+                      {% else %}
+                        {{ notification.actor.username }}
+                      {% endif %}
+                    </strong>
+                    {% if notification.notif_type == 'follow' %}
+                      sizi takip etmeye başladı.
+                    {% elif notification.notif_type == 'like' %}
+                      etkinliğinizi beğendi.
+                    {% else %}
+                      etkinliğinize yorum yaptı.
+                    {% endif %}
+                  </div>
+                  <div class="notif-time">{{ notification.created_at|timesince }} önce</div>
+                </div>
+              </div>
+            {% empty %}
+              <div class="notification-empty">Henüz bildirim yok.</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      {% include "includes/user_nav.html" %}
+    </div>
+  </header>
+
+  <main class="feed-container">
+    <section class="feed-column">
+      <div id="feedList" class="feed-list">
+        {% for activity in activities %}
+          <article class="activity-card" data-activity-id="{{ activity.id }}">
+            <div class="card-header">
+              <img class="avatar activity-avatar" src="{{ activity.avatar }}" alt="">
+              <div class="meta">
+                <a class="username" href="{% url 'public_profile' username=activity.username %}">{{ activity.display_name }}</a>
+                <span class="action-text">
+                  {% if activity.type == 'rating' %}
+                    {% if activity.content_type == 'book' %}bir kitabı puanladı{% else %}bir filmi puanladı{% endif %}
+                  {% else %}
+                    {% if activity.content_type == 'book' %}bir kitap hakkında yazdı{% else %}bir film hakkında yazdı{% endif %}
+                  {% endif %}
+                </span>
+                <span class="time">{{ activity.human_time }}</span>
+              </div>
+            </div>
+            <div class="activity-content">
+              <div class="activity-poster">
+                {% if activity.cover_url %}
+                  <img class="activity-cover" src="{{ activity.cover_url }}" alt="{{ activity.title }}">
+                {% else %}
+                  <div class="activity-cover" style="display:flex;align-items:center;justify-content:center;background:#081321;">{% if activity.content_type == 'book' %}📘{% else %}🎬{% endif %}</div>
+                {% endif %}
+              </div>
+              <div class="activity-details">
+                <h2 class="activity-title">{{ activity.title|default:"Başlıksız" }}</h2>
+                <div class="activity-year">{{ activity.year }}{% if activity.content_type == 'book' %} · Kitap{% else %} · Film{% endif %}</div>
+                {% if activity.rating %}
+                  <div class="activity-rating"><span class="rating-stars">★</span><span class="rating-value">{{ activity.rating }}/10</span></div>
+                {% endif %}
+                {% if activity.overview %}<p class="activity-overview">{{ activity.overview }}</p>{% endif %}
+                {% if activity.review_excerpt %}<p class="activity-review">{{ activity.review_excerpt }}</p>{% endif %}
+              </div>
+            </div>
+            <div class="card-interactions">
+              <div class="likes-info">
+                <span class="likes-text {% if not activity.likes_count %}likes-text-empty{% endif %}">
+                  <span class="likes-count">{{ activity.likes_count }}</span> beğeni
+                </span>
+              </div>
+              <div class="interaction-buttons">
+                <button class="btn-interact btn-like {% if activity.user_liked %}liked{% endif %}" type="button" data-activity-id="{{ activity.id }}">
+                  <span class="icon">♥</span><span class="like-label">{% if activity.user_liked %}Beğenildi{% else %}Beğen{% endif %}</span>
+                </button>
+                <button class="btn-interact btn-comment" type="button" data-activity-id="{{ activity.id }}">
+                  <span class="icon">💬</span>Yorum <span class="comment-count">{{ activity.comments_count }}</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        {% empty %}
+          <div class="empty-feed">Takip ettiğiniz kişilerin etkinlikleri burada görünecek.</div>
+        {% endfor %}
+      </div>
+      {% if page_count > 1 %}
+        <button id="loadMore" class="btn-interact" type="button" data-page="2" data-pages="{{ page_count }}">Daha Fazla</button>
+      {% endif %}
+      <div id="loading" class="loading">Yükleniyor...</div>
+    </section>
+
+    <aside class="right-column">
+      <div class="card suggestions">
+        <h5>Önerilen kullanıcı</h5>
+        {% if suggested_user %}
+          <div class="suggested-user-card">
+            <img class="suggested-avatar" src="{{ suggested_user.avatar_url_or_default }}" alt="">
+            <div class="suggested-info">
+              <span class="suggested-name">{{ suggested_user.display_name }}</span>
+              <button class="{% if suggested_user.is_following %}unfollow-btn{% else %}follow-btn{% endif %}" type="button" data-user-id="{{ suggested_user.id }}">
+                {% if suggested_user.is_following %}Takibi Bırak{% else %}Takip Et{% endif %}
+              </button>
+            </div>
+          </div>
+        {% else %}
+          <p class="notification-empty">Şimdilik öneri yok.</p>
+        {% endif %}
+      </div>
+    </aside>
+  </main>
+
+  <div id="commentsModal" class="comments-modal" aria-hidden="true">
+    <div class="comments-modal-overlay"></div>
+    <div class="comments-modal-content" role="dialog" aria-modal="true" aria-labelledby="comments-title">
+      <div class="comments-modal-header">
+        <h3 id="comments-title">Yorumlar</h3>
+        <button id="commentsClose" class="comments-modal-close" type="button" aria-label="Kapat">×</button>
+      </div>
+      <div class="comments-modal-body">
+        <div id="commentsList" class="comments-list"></div>
+      </div>
+      <div class="comments-modal-footer">
+        <textarea id="commentText" placeholder="Yorum yaz..." rows="3"></textarea>
+        <button id="commentSubmit" class="btn-interact" type="button">Gönder</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const feedList = document.getElementById('feedList');
+    const commentsModal = document.getElementById('commentsModal');
+    const commentsList = document.getElementById('commentsList');
+    const commentText = document.getElementById('commentText');
+    let activeActivityId = null;
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+      }[char]));
+    }
+
+    function openComments(activityId) {
+      activeActivityId = activityId;
+      commentsModal.style.display = 'flex';
+      commentsModal.setAttribute('aria-hidden', 'false');
+      commentsList.innerHTML = '<div class="no-comments">Yükleniyor...</div>';
+      fetch(`/activities/${activityId}/comments/`)
+        .then((response) => response.json())
+        .then((data) => {
+          const comments = data.comments || [];
+          if (!comments.length) {
+            commentsList.innerHTML = '<div class="no-comments">Henüz yorum yok.</div>';
+            return;
+          }
+          commentsList.innerHTML = comments.map((comment) => `
+            <div class="comment-item" data-comment-id="${comment.id}">
+              <img class="comment-avatar" src="${escapeHtml(comment.avatar)}" alt="">
+              <div class="comment-content">
+                <div class="comment-header"><strong>${escapeHtml(comment.user)}</strong><span>${escapeHtml(comment.human_time)}</span></div>
+                <div class="comment-text">${escapeHtml(comment.comment)}</div>
+              </div>
+            </div>
+          `).join('');
+        });
+    }
+
+    function closeComments() {
+      commentsModal.style.display = 'none';
+      commentsModal.setAttribute('aria-hidden', 'true');
+      commentText.value = '';
+      activeActivityId = null;
+    }
+
+    document.getElementById('commentsClose').addEventListener('click', closeComments);
+    commentsModal.querySelector('.comments-modal-overlay').addEventListener('click', closeComments);
+
+    feedList.addEventListener('click', (event) => {
+      const likeButton = event.target.closest('.btn-like');
+      const commentButton = event.target.closest('.btn-comment');
+
+      if (likeButton) {
+        const activityId = likeButton.dataset.activityId;
+        fetch("{% url 'toggle_like' %}", {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+          body: JSON.stringify({activity_id: activityId})
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.success) return;
+            likeButton.classList.toggle('liked', data.liked);
+            likeButton.querySelector('.like-label').textContent = data.liked ? 'Beğenildi' : 'Beğen';
+            const card = likeButton.closest('.activity-card');
+            card.querySelector('.likes-count').textContent = data.likes_count;
+          });
+      }
+
+      if (commentButton) {
+        openComments(commentButton.dataset.activityId);
+      }
+    });
+
+    document.getElementById('commentSubmit').addEventListener('click', () => {
+      const text = commentText.value.trim();
+      if (!activeActivityId || !text) return;
+      fetch("{% url 'add_activity_comment' %}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({activity_id: activeActivityId, comment: text})
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (!data.success) return;
+          commentText.value = '';
+          openComments(activeActivityId);
+          const count = document.querySelector(`.btn-comment[data-activity-id="${activeActivityId}"] .comment-count`);
+          if (count) count.textContent = Number(count.textContent || 0) + 1;
+        });
+    });
+
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    notificationBell.addEventListener('click', () => {
+      const hidden = notificationDropdown.getAttribute('aria-hidden') !== 'false';
+      notificationDropdown.setAttribute('aria-hidden', hidden ? 'false' : 'true');
+      if (hidden) {
+        fetch("{% url 'mark_notifications_seen' %}", {
+          method: 'POST',
+          headers: {'X-CSRFToken': csrfToken}
+        });
+        const badge = document.getElementById('notificationBadge');
+        if (badge) badge.remove();
+      }
+    });
+
+    document.querySelectorAll('.follow-btn, .unfollow-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const isFollowing = button.classList.contains('unfollow-btn');
+        fetch(isFollowing ? "{% url 'unfollow_user' %}" : "{% url 'follow_user' %}", {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+          body: JSON.stringify({user_id: button.dataset.userId})
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.success) return;
+            button.className = data.following ? 'unfollow-btn' : 'follow-btn';
+            button.textContent = data.following ? 'Takibi Bırak' : 'Takip Et';
+          });
+      });
+    });
+  </script>
+</body>
+</html>

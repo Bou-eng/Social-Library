@@ -10,7 +10,7 @@
       --accent: #22c55e;
     }
 
-    /* Decorative font for brand to match other pages */
+    /* Load a decorative/display font for the brand */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
 
     * {
@@ -58,26 +58,23 @@
       box-shadow: 0 10px 26px rgba(59, 130, 246, 0.45);
     }
 
-    .brand-text {
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      color: #f9fafb;
-      line-height: 1;
-      text-shadow: 0 0 6px rgba(15, 23, 42, 0.6);
-      display: inline-block;
-    }
+    .brand-text { font-weight:700; color:#f9fafb; text-shadow:0 0 6px rgba(15,23,42,0.6); line-height:1; font-family: 'Playfair Display', serif; }
+    .brand-text .line1 { display:block; font-size:14px; font-weight:600; margin-bottom:6px; letter-spacing:0.01em; }
+    .brand-text .line2 { display:block; font-size:18px; font-weight:700; margin-top:2px; letter-spacing:0.02em; }
 
-    .brand-text .line1{display:block;font-size:14px;font-weight:600}
-    .brand-text .line2{display:block;font-size:18px;font-weight:800;margin-top:2px}
+    /* auth pages: brand is fixed top-left; nav is only on homepage */
+    .nav-avatar{width:40px;height:40px;border-radius:10px;object-fit:cover;display:block}
+    .avatar-fallback{width:40px;height:40px;border-radius:10px;background:linear-gradient(180deg,var(--primary),#1d4ed8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    .nav-username{color:var(--text-main);text-decoration:none;font-weight:600;margin-left:6px}
 
     .login-container {
-      max-width: 380px;
+      max-width: 560px;
       width: 100%;
       margin: 0 auto;
       padding: 8px;
     }
 
-    /* keep some top spacing so fixed logo doesn't overlap centered card */
+    /* keep small top spacing so fixed brand doesn't overlap centered card */
     body {
       padding-top: 18px;
     }
@@ -85,20 +82,22 @@
     .login-card {
       background: rgba(15, 23, 42, 0.98);
       border-radius: 18px;
-      padding: 26px 20px 22px;
+      /* pull title and top content up slightly, give more room at bottom for button */
+      padding: 10px 30px 56px;
       box-shadow:
-        0 18px 36px rgba(15, 23, 42, 0.85),
+        0 20px 40px rgba(15, 23, 42, 0.85),
         0 0 0 1px rgba(148, 163, 184, 0.06);
       backdrop-filter: blur(8px);
       width: 100%;
-      max-width: 380px;
+      max-width: 560px;
     }
 
     .login-title {
       font-weight: 700;
       font-size: 22px;
       text-align: center;
-      margin-bottom: 18px;
+      margin-top: 4px; /* slightly move title up */
+      margin-bottom: 6px; /* pull title closer to form */
       color: #f9fafb;
     }
 
@@ -153,7 +152,7 @@
       border: 1px solid var(--border-input);
       color: var(--text-main);
       border-radius: 12px;
-      padding: 10px 12px;
+      padding: 12px 14px;
       font-size: 14px;
     }
 
@@ -209,6 +208,50 @@
 
     .password-wrapper {
       position: relative;
+    }
+
+    /* make a generic input wrapper to align sizes with password wrapper */
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper .form-control {
+      width: 100%;
+      padding-right: 14px; /* same as normal inputs; no toggle for these fields */
+    }
+
+    /* Ensure password fields also reserve space for the toggle inside */
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper .form-control {
+      width: 100%;
+      padding-right: 88px;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      background: rgba(255,255,255,0.02);
+      border-radius: 6px;
+      padding: 6px 8px;
+      z-index: 3;
+    }
+
+    /* Slightly increase spacing above the register submit button */
+    body.register-page .btn-login {
+      margin-top: 18px;
     }
 
     .toggle-password {

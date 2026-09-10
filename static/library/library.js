@@ -14,6 +14,8 @@ document.addEventListener('DOMContentLoaded', function(){
   const createCard = document.getElementById('create-list-card');
   const createModal = document.getElementById('createListModal');
   const listDetailModal = document.getElementById('listDetailModal');
+  const listDetailGrid = document.getElementById('list-detail-grid');
+  const deleteListConfirm = document.getElementById('delete-list-confirm');
 
   function openModal(modal){ if(!modal) return; modal.classList.remove('hidden'); }
   function closeModal(modal){ if(!modal) return; modal.classList.add('hidden'); }
@@ -65,17 +67,62 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   // Open list detail modal when clicking a custom-list-card
-  document.addEventListener('click', function(e){
+  function escapeHtml(value){
+    return String(value || '').replace(/[&<>"']/g, char => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+    }[char]));
+  }
+
+  document.addEventListener('click', async function(e){
     const cl = e.target.closest('.custom-list-card');
     if(cl){
       const listId = cl.dataset.listId;
-      // For now, show empty modal with title from card
       const title = cl.querySelector('.title') ? cl.querySelector('.title').textContent : 'Liste';
       document.getElementById('list-detail-title').textContent = title;
-      // TODO: fetch list items via API when available; for now leave grid empty
+      if(listDetailModal) listDetailModal.dataset.listId = listId;
+      if(listDetailGrid) listDetailGrid.innerHTML = '<p>Yükleniyor...</p>';
       openModal(listDetailModal);
+      try{
+        const res = await fetch(`/accounts/library/list-items/?list_id=${encodeURIComponent(listId)}`);
+        const data = await res.json();
+        if(!data.ok || !listDetailGrid) return;
+        if(!data.items.length){
+          listDetailGrid.innerHTML = '<p>Bu listede henüz öğe yok.</p>';
+          return;
+        }
+        listDetailGrid.innerHTML = data.items.map(item => `
+          <article class="card library-card custom-list-item-card" data-item-pk="${item.pk}">
+            <button class="btn-delete delete-overlay" type="button" aria-label="Sil">Sil</button>
+            <div class="poster">
+              ${item.cover_url ? `<img class="poster-img" src="${escapeHtml(item.cover_url)}" alt="${escapeHtml(item.title)}">` : `<div class="poster-fallback">${item.media_type === 'book' ? '📘' : '🎬'}</div>`}
+            </div>
+            <div class="title">${escapeHtml(item.title)}</div>
+            <div class="year">${item.media_type === 'book' ? 'Kitap' : 'Film'}</div>
+          </article>
+        `).join('');
+      }catch(err){ console.error(err); }
     }
   });
+
+  if(deleteListConfirm){
+    deleteListConfirm.addEventListener('click', async function(){
+      const listId = listDetailModal ? listDetailModal.dataset.listId : '';
+      if(!listId || !confirm('Bu listeyi silmek istediğinize emin misiniz?')) return;
+      const form = new FormData();
+      form.append('list_pk', listId);
+      try{
+        const res = await fetch('/accounts/library/delete-list/', { method: 'POST', body: form, headers: { 'X-CSRFToken': csrf } });
+        const data = await res.json();
+        if(data.ok){
+          const card = document.querySelector(`.custom-list-card[data-list-id="${CSS.escape(listId)}"]`);
+          if(card) card.remove();
+          closeModal(listDetailModal);
+        } else {
+          alert('Liste silinemedi: ' + (data.error || ''));
+        }
+      }catch(err){ console.error(err); alert('Silme sırasında hata oluştu'); }
+    });
+  }
 
   // Delete overlay handling: delegate
   document.addEventListener('click', async function(e){
@@ -84,13 +131,12 @@ document.addEventListener('DOMContentLoaded', function(){
       const card = btn.closest('.card');
       if(!card) return;
       if(!confirm('Bu öğeyi silmek istediğinize emin misiniz?')) return;
-      // attempt to delete: prefer custom-list-item endpoint if inside list modal (not implemented); fallback to library delete
       const itemPk = card.dataset.itemPk;
       try{
         const form = new FormData();
         if(itemPk) form.append('item_pk', itemPk);
-        // call library delete endpoint
-        const res = await fetch('/accounts/library/delete-item/', { method: 'POST', body: form, headers: { 'X-CSRFToken': csrf } });
+        const endpoint = card.classList.contains('custom-list-item-card') ? '/accounts/library/delete-custom-item/' : '/accounts/library/delete-item/';
+        const res = await fetch(endpoint, { method: 'POST', body: form, headers: { 'X-CSRFToken': csrf } });
         const data = await res.json();
         if(data.ok){
           card.remove();

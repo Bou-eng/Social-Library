@@ -1,6 +1,5 @@
-                                    
-
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,12 +9,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-di7769fzgo)!9mo5#@r^%*l53%ng023@4_m5wcg6dd&kv#h^!!'
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-local-dev-only-change-me',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('1', 'true', 'yes', 'on')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -102,7 +108,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 # Include the project-level `static/` directory so files under BASE_DIR/static are served in development
-from pathlib import Path as _Path
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Default primary key field type
@@ -126,6 +131,5 @@ DEFAULT_FROM_EMAIL = 'noreply@sosyal-kutuphanem.dev'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# External API keys (read from environment)
-import os
-TMDB_API_KEY = "500ac75b8f2ef3b8ef043e6c478a4fa6"
+# External API keys
+TMDB_API_KEY = os.environ.get('TMDB_API_KEY', '500ac75b8f2ef3b8ef043e6c478a4fa6')

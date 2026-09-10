@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Keşfet - Sosyal Kütüphanem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/home.css' %}">
+  <link rel="stylesheet" href="{% static 'explore/explore.css' %}">
+</head>
+<body class="explore-page">
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="brand-logo">
+        <div class="brand-icon">📚</div>
+        <div class="brand-text"><span class="line1">Sosyal</span><span class="line2">Kütüphanem</span></div>
+      </div>
+    </div>
+    <nav class="nav-center nav-items" aria-label="Ana menü">
+      <a class="nav-link" href="{% url 'home' %}">Anasayfa</a>
+      <a class="nav-link active" href="{% url 'explore:explore' %}">Keşfet</a>
+      <a class="nav-link" href="{% url 'library' %}">Kütüphanem</a>
+    </nav>
+    <div class="nav-right user-area">
+      {% include "includes/user_nav.html" %}
+    </div>
+  </header>
+
+  <section class="explore-search-wrap">
+    <form class="search-wrap" method="get" action="{% url 'explore:explore' %}">
+      <input class="search-input form-control" type="search" name="q" value="{{ search_query }}" placeholder="Film veya kitap ara">
+      <button class="btn btn-primary" type="submit">Ara</button>
+    </form>
+  </section>
+
+  <main class="explore-main">
+    <form class="filters" method="get" action="{% url 'explore:explore' %}">
+      <input type="hidden" name="q" value="{{ search_query }}">
+      <label>
+        <span>Tür</span>
+        <select class="form-control" name="type">
+          <option value="all" {% if filter_type == 'all' %}selected{% endif %}>Hepsi</option>
+          <option value="movie" {% if filter_type == 'movie' %}selected{% endif %}>Film</option>
+          <option value="book" {% if filter_type == 'book' %}selected{% endif %}>Kitap</option>
+        </select>
+      </label>
+      <label>
+        <span>Başlangıç yılı</span>
+        <input class="form-control" type="number" name="year_from" min="1800" max="2100" value="{{ filter_year_from }}">
+      </label>
+      <label>
+        <span>Bitiş yılı</span>
+        <input class="form-control" type="number" name="year_to" min="1800" max="2100" value="{{ filter_year_to }}">
+      </label>
+      <label class="filter-rating {% if rating_disabled %}disabled{% endif %}">
+        <span>Puan</span>
+        <select class="form-control" name="rating_band" {% if rating_disabled %}disabled{% endif %}>
+          <option value="" {% if not filter_rating_band %}selected{% endif %}>Hepsi</option>
+          <option value="2-5" {% if filter_rating_band == '2-5' %}selected{% endif %}>2-5</option>
+          <option value="5-7" {% if filter_rating_band == '5-7' %}selected{% endif %}>5-7</option>
+          <option value="7+" {% if filter_rating_band == '7+' %}selected{% endif %}>7+</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" type="submit">Filtrele</button>
+    </form>
+
+    <section class="content">
+      {% if search_query %}
+        <section class="showcase results">
+          <h2>Arama Sonuçları</h2>
+          <div class="grid">
+            {% for item in search_results %}
+              <article class="card media-card" data-media-type="movie" data-item-id="{{ item.external_id }}" data-title="{{ item.title }}" data-cover-url="{{ item.poster_url }}" data-year="{{ item.year }}">
+                <div class="poster">{% if item.poster_url %}<img class="poster-img" src="{{ item.poster_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">🎬</div>{% endif %}</div>
+                <div class="title">{{ item.title }}</div>
+                <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating|floatformat:1 }}{% endif %}</div>
+              </article>
+            {% endfor %}
+            {% for item in book_search_results %}
+              <article class="card media-card" data-media-type="book" data-item-id="{{ item.external_id }}" data-title="{{ item.title }}" data-cover-url="{{ item.cover_url }}" data-year="{{ item.year }}">
+                <div class="poster">{% if item.cover_url %}<img class="poster-img" src="{{ item.cover_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">📘</div>{% endif %}</div>
+                <div class="title">{{ item.title }}</div>
+                <div class="year">{{ item.year }}</div>
+              </article>
+            {% endfor %}
+          </div>
+        </section>
+      {% endif %}
+
+      <section class="showcase">
+        <h2>En İyi Filmler</h2>
+        <div class="row-carousel">
+          {% for item in top_rated_items %}
+            <article class="card small media-card" data-media-type="movie" data-item-id="{{ item.external_id }}" data-title="{{ item.title }}" data-cover-url="{{ item.poster_url }}" data-year="{{ item.year }}">
+              <div class="poster">{% if item.poster_url %}<img class="poster-img" src="{{ item.poster_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">🎬</div>{% endif %}</div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating|floatformat:1 }}{% endif %}</div>
+            </article>
+          {% empty %}
+            <p>Film verisi bulunamadı.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="showcase">
+        <h2>Popüler Filmler</h2>
+        <div class="row-carousel">
+          {% for item in popular_movies %}
+            <article class="card small media-card" data-media-type="movie" data-item-id="{{ item.external_id }}" data-title="{{ item.title }}" data-cover-url="{{ item.poster_url }}" data-year="{{ item.year }}">
+              <div class="poster">{% if item.poster_url %}<img class="poster-img" src="{{ item.poster_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">🎬</div>{% endif %}</div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}{% if item.rating %} · {{ item.rating|floatformat:1 }}{% endif %}</div>
+            </article>
+          {% empty %}
+            <p>Popüler film verisi bulunamadı.</p>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="showcase">
+        <h2>Popüler Kitaplar</h2>
+        <div class="row-carousel">
+          {% for item in popular_books %}
+            <article class="card small media-card" data-media-type="book" data-item-id="{{ item.external_id }}" data-title="{{ item.title }}" data-cover-url="{{ item.cover_url }}" data-year="{{ item.year }}">
+              <div class="poster">{% if item.cover_url %}<img class="poster-img" src="{{ item.cover_url }}" alt="{{ item.title }}">{% else %}<div class="poster-fallback">📘</div>{% endif %}</div>
+              <div class="title">{{ item.title }}</div>
+              <div class="year">{{ item.year }}</div>
+            </article>
+          {% empty %}
+            <p>Kitap verisi bulunamadı.</p>
+          {% endfor %}
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="detailModal" class="detail-modal" aria-hidden="true">
+    <div class="detail-modal-backdrop"></div>
+    <div class="detail-modal-content" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button id="detailClose" class="detail-modal-close" type="button" aria-label="Kapat">×</button>
+      <div class="detail-layout">
+        <div class="detail-poster-wrap"><img id="detailPoster" class="detail-poster" alt=""></div>
+        <div class="detail-info">
+          <h2 id="detailTitle"></h2>
+          <div id="detailMeta" class="detail-meta"></div>
+          <p id="detailOverview" class="detail-overview"></p>
+          <div class="detail-row">
+            <label class="detail-field">
+              <span>Durum</span>
+              <select id="detailStatus" class="form-control"></select>
+            </label>
+            <label class="detail-field">
+              <span>Puan</span>
+              <input id="detailRating" class="form-control" type="number" min="1" max="10" placeholder="1-10">
+            </label>
+            <label class="detail-field list-select-wrapper">
+              <span>Özel Liste</span>
+              <select id="detailCustomList" class="form-control custom-list-select">
+                <option value="">Liste seçme</option>
+                {% for list in custom_lists %}
+                  <option value="{{ list.id }}">{{ list.emoji }} {{ list.name }}</option>
+                {% endfor %}
+              </select>
+            </label>
+          </div>
+          <label class="detail-comment">
+            <span>Yorum</span>
+            <textarea id="detailComment" class="form-control" rows="4" placeholder="Bu içerik hakkında düşüncen..."></textarea>
+          </label>
+          <div class="detail-modal-footer">
+            <button id="savePreferences" class="btn btn-primary" type="button">Kaydet</button>
+            <button id="saveComment" class="btn btn-primary" type="button">Yorumu Paylaş</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const detailModal = document.getElementById('detailModal');
+    const detailClose = document.getElementById('detailClose');
+    const detailPoster = document.getElementById('detailPoster');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailMeta = document.getElementById('detailMeta');
+    const detailOverview = document.getElementById('detailOverview');
+    const detailStatus = document.getElementById('detailStatus');
+    const detailRating = document.getElementById('detailRating');
+    const detailCustomList = document.getElementById('detailCustomList');
+    const detailComment = document.getElementById('detailComment');
+    let currentItem = null;
+
+    function setStatusOptions(mediaType) {
+      const options = mediaType === 'book'
+        ? [['read', 'Okudum'], ['to_read', 'Okuyacağım']]
+        : [['watched', 'İzledim'], ['to_watch', 'İzleyeceğim']];
+      detailStatus.innerHTML = '<option value="">Durum seçme</option>' + options.map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
+    }
+
+    function openModal() {
+      detailModal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+      detailModal.setAttribute('aria-hidden', 'true');
+      detailComment.value = '';
+      currentItem = null;
+    }
+
+    detailClose.addEventListener('click', closeModal);
+    detailModal.querySelector('.detail-modal-backdrop').addEventListener('click', closeModal);
+
+    document.querySelectorAll('.media-card').forEach((card) => {
+      card.addEventListener('click', () => {
+        const mediaType = card.dataset.mediaType;
+        const itemId = card.dataset.itemId;
+        setStatusOptions(mediaType);
+        detailTitle.textContent = card.dataset.title || '';
+        detailPoster.src = card.dataset.coverUrl || '';
+        detailPoster.style.display = card.dataset.coverUrl ? 'block' : 'none';
+        detailMeta.textContent = card.dataset.year || '';
+        detailOverview.textContent = 'Yükleniyor...';
+        detailRating.value = '';
+        detailCustomList.value = '';
+        currentItem = {
+          media_type: mediaType,
+          item_id: itemId,
+          title: card.dataset.title || '',
+          cover_url: card.dataset.coverUrl || '',
+          year: card.dataset.year || ''
+        };
+        openModal();
+        fetch(`{% url 'explore:item_details' %}?media_type=${encodeURIComponent(mediaType)}&id=${encodeURIComponent(itemId)}`)
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.ok) {
+              detailOverview.textContent = 'Detaylar alınamadı.';
+              return;
+            }
+            const item = data.item || {};
+            currentItem = {
+              ...currentItem,
+              title: item.title || currentItem.title,
+              cover_url: item.poster_url || item.cover_url || currentItem.cover_url,
+              year: item.year || currentItem.year
+            };
+            detailTitle.textContent = currentItem.title;
+            detailPoster.src = currentItem.cover_url || '';
+            detailPoster.style.display = currentItem.cover_url ? 'block' : 'none';
+            const people = item.director || item.author || '';
+            const length = item.runtime ? `${item.runtime} dk` : (item.pages ? `${item.pages} sayfa` : '');
+            detailMeta.textContent = [currentItem.year, people, length].filter(Boolean).join(' · ');
+            detailOverview.textContent = item.overview || 'Açıklama yok.';
+            if (data.user_state) {
+              detailStatus.value = data.user_state.status || '';
+              detailRating.value = data.user_state.rating || '';
+              detailCustomList.value = data.user_state.custom_list_id || '';
+            }
+          });
+      });
+    });
+
+    document.getElementById('savePreferences').addEventListener('click', () => {
+      if (!currentItem) return;
+      const form = new FormData();
+      form.append('media_type', currentItem.media_type);
+      form.append('item_id', currentItem.item_id);
+      form.append('status', detailStatus.value);
+      form.append('rating', detailRating.value);
+      form.append('custom_list_id', detailCustomList.value);
+      form.append('title', currentItem.title);
+      form.append('cover_url', currentItem.cover_url);
+      form.append('year', currentItem.year);
+      fetch("{% url 'explore:save_item_preferences' %}", {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrfToken},
+        body: form
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.ok) closeModal();
+        });
+    });
+
+    document.getElementById('saveComment').addEventListener('click', () => {
+      if (!currentItem || !detailComment.value.trim()) return;
+      fetch("{% url 'explore:save_comment' %}", {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrfToken},
+        body: JSON.stringify({
+          media_type: currentItem.media_type,
+          item_id: currentItem.item_id,
+          comment: detailComment.value.trim(),
+          title: currentItem.title,
+          cover_url: currentItem.cover_url,
+          year: currentItem.year
+        })
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) closeModal();
+        });
+    });
+  </script>
+</body>
+</html>

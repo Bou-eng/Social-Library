@@ -158,7 +158,7 @@
 
       function openModal(data){
         if(!modalOverlay) return;
-        coverImg.src = data.cover_url || '/static/accounts/cover-placeholder.png';
+        coverImg.src = data.cover_url || '/static/accounts/cover-placeholder.svg';
         titleEl.textContent = data.title || '';
         yearEl.textContent = data.year ? (data.year + (data.media_type === 'book' ? ' • Kitap' : ' • Film')) : '';
         bodyEl.textContent = data.comment_text || '';

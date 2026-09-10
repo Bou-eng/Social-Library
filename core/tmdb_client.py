@@ -1,4 +1,4 @@
-"""Fresh TMDb client implementation (simple and testable).
+"""TMDb client implementation.
 
 Provides:
 - fetch_tmdb(path, params=None)
@@ -6,12 +6,13 @@ Provides:
 - get_popular_movies(page=1)
 - get_top_rated_movies(page=1)
 
-This module intentionally uses simple prints for debugging during development.
 """
 from django.conf import settings
+import logging
 import requests
 
 
+logger = logging.getLogger(__name__)
 TMDB_API_KEY = getattr(settings, 'TMDB_API_KEY', None)
 TMDB_BASE_URL = getattr(settings, 'TMDB_BASE_URL', 'https://api.themoviedb.org/3')
 TMDB_IMAGE_BASE_URL = getattr(settings, 'TMDB_IMAGE_BASE_URL', 'https://image.tmdb.org/t/p')
@@ -25,15 +26,15 @@ def fetch_tmdb(path, params=None):
     try:
         resp = requests.get(url, params=params, timeout=REQUEST_TIMEOUT)
     except Exception as e:
-        print(f"[tmdb] Request error: {e}")
+        logger.warning("TMDb request failed: %s", e)
         return {}
     if resp.status_code != 200:
-        print(f"[tmdb] Non-200 response for {resp.url}: {resp.status_code} - {resp.text}")
+        logger.warning("TMDb returned %s for %s", resp.status_code, resp.url)
         return {}
     try:
         return resp.json()
     except Exception as e:
-        print(f"[tmdb] JSON decode error for {resp.url}: {e}")
+        logger.warning("Could not decode TMDb response for %s: %s", resp.url, e)
         return {}
 
 
@@ -54,28 +55,21 @@ def normalize_movie(movie):
 
 def get_popular_movies(page=1):
     if not TMDB_API_KEY:
-        print('[tmdb] TMDB_API_KEY is not set in settings')
+        logger.warning("TMDB_API_KEY is not set in settings")
         return []
     data = fetch_tmdb('/movie/popular', {'page': page})
     results = data.get('results', []) if isinstance(data, dict) else []
     movies = [normalize_movie(m) for m in results if normalize_movie(m)]
-    print('Popular movies count:', len(movies))
-    if movies:
-        try:
-            print('Sample movie poster:', movies[0].get('poster_url'))
-        except Exception:
-            pass
     return movies
 
 
 def get_top_rated_movies(page=1):
     if not TMDB_API_KEY:
-        print('[tmdb] TMDB_API_KEY is not set in settings')
+        logger.warning("TMDB_API_KEY is not set in settings")
         return []
     data = fetch_tmdb('/movie/top_rated', {'page': page})
     results = data.get('results', []) if isinstance(data, dict) else []
     movies = [normalize_movie(m) for m in results if normalize_movie(m)]
-    print('Top rated movies count:', len(movies))
     return movies
 
 
@@ -85,7 +79,7 @@ def search_movies(query, page=1):
     Returns a list of dicts in the same shape as get_popular_movies / get_top_rated_movies.
     """
     if not TMDB_API_KEY:
-        print('[tmdb] TMDB_API_KEY is not set in settings')
+        logger.warning("TMDB_API_KEY is not set in settings")
         return []
     if not query:
         return []
@@ -93,7 +87,6 @@ def search_movies(query, page=1):
     data = fetch_tmdb('/search/movie', params)
     results = data.get('results', []) if isinstance(data, dict) else []
     movies = [normalize_movie(m) for m in results if normalize_movie(m)]
-    print(f"Search '{query}' returned {len(movies)} movies (page {page})")
     return movies
 
 
