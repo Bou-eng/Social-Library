@@ -278,7 +278,7 @@ http://127.0.0.1:8000/
 Hosted at:
 
 ```text
-[http://127.0.0.1:8000/](https://social-library-qipj.onrender.com)
+https://social-library-qipj.onrender.com
 ```
 
 ---
