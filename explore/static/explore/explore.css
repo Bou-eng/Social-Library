@@ -24,6 +24,9 @@ body.explore-page{min-height:100vh;background:radial-gradient(circle at top,#111
 .search-wrap{max-width:720px;width:100%;display:flex;gap:8px}
 .search-input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);background:rgba(2,6,23,0.6);color:var(--text);box-sizing:border-box}
 .btn.btn-primary{background:var(--primary);border:0;padding:10px 14px;border-radius:12px;color:white}
+.explore-page .top-nav{flex-wrap:wrap}
+.explore-page .language-switcher{display:flex;align-items:center;margin-right:12px}
+.explore-page .language-switcher a{color:var(--text);text-decoration:none;font-size:12px;font-weight:700;padding:6px 8px;border:1px solid rgba(255,255,255,.12);border-radius:6px}
 .explore-main{display:flex;gap:18px;padding:20px;max-width:1200px;margin:0 auto}
 .filters{width:220px;flex:0 0 220px;display:flex;flex-direction:column;gap:10px}
 .filters .form-control{padding:6px 10px;border-radius:8px;background:rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.02);color:var(--text);box-sizing:border-box;width:100%;max-width:100%}
@@ -177,6 +180,14 @@ body.explore-page{min-height:100vh;background:radial-gradient(circle at top,#111
 
 /* responsive */
 @media (max-width:900px){.explore-main{flex-direction:column}.filters{width:100%;flex:0 0 auto;order:2}.content{order:1}}
+@media (max-width:600px){
+  .explore-page .top-nav{display:flex;gap:10px;padding:12px;align-items:center}
+  .explore-page .top-nav .nav-left{flex:1 1 auto}
+  .explore-page .top-nav .nav-center{order:3;width:100%;justify-content:center;flex-wrap:wrap;gap:8px}
+  .explore-page .top-nav .nav-right{margin-left:auto}
+  .explore-page .language-switcher{margin-right:0}
+  .explore-search-wrap{margin-top:12px}
+}
 @media (max-width:760px){.detail-layout{grid-template-columns:1fr}.detail-poster-wrap{max-width:240px;min-height:320px}.detail-modal-footer{flex-direction:column}.detail-modal-footer .btn{width:100%}}
 
 /* Make the filters sidebar sticky on larger screens (kept separate from template) */

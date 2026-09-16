@@ -22,6 +22,9 @@
 
     <div class="nav-right user-area">
       <a href="{% url 'home' %}" class="btn btn-primary">Anasayfa</a>
+      <div class="language-switcher" aria-label="Dil">
+        {% if request.session.site_language == 'en' %}<a href="{{ request.path }}?lang=tr" aria-label="Türkçe">TR</a>{% else %}<a href="{{ request.path }}?lang=en" aria-label="English">EN</a>{% endif %}
+      </div>
     </div>
   </header>
   <div class="profile-container">

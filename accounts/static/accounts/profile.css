@@ -34,6 +34,9 @@ body.profile-page{min-height:100vh;margin:0;background:radial-gradient(circle at
 .card-card img{width:100px;height:150px;object-fit:cover;border-radius:6px}
 .card-meta{margin-top:8px;font-size:13px;color:var(--muted)}
 @media(max-width:768px){
+	.profile-page .top-nav{flex-wrap:wrap;gap:10px}
+	.profile-page .top-nav .nav-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+	.profile-page .language-switcher{display:flex;align-items:center}
 	.profile-main{flex-direction:column;align-items:center}
 	.avatar-column{flex:0 0 auto}
 	.details-column{width:100%}

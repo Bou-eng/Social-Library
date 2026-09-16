@@ -14,6 +14,8 @@ body.library-page{min-height:100vh;background:radial-gradient(circle at top,#111
 .nav-link{color:var(--muted);text-decoration:none;padding:8px;border-radius:6px}
 .nav-link.active{color:var(--text);border-bottom:2px solid var(--primary)}
 .nav-right{display:flex;align-items:center;gap:10px}
+.language-switcher{display:flex;align-items:center;flex:0 0 auto}
+.language-switcher a{color:var(--text);text-decoration:none;font-size:12px;font-weight:700;padding:6px 8px;border:1px solid rgba(255,255,255,.12);border-radius:6px}
 .nav-avatar{width:36px;height:36px;border-radius:8px;object-fit:cover}
 .user-profile{display:flex;align-items:center;gap:10px;position:relative}
 .avatar-fallback{width:36px;height:36px;border-radius:8px;background:linear-gradient(180deg,var(--primary),#1d4ed8);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
@@ -28,6 +30,10 @@ body.library-page{min-height:100vh;background:radial-gradient(circle at top,#111
 /* Responsive: reduce gap on small screens so tabs don't overflow */
 @media (max-width:600px){
   .tabs{gap:12px}
+  .top-nav{flex-wrap:wrap;gap:12px;padding:12px}
+  .top-nav .nav-center{order:3;width:100%;justify-content:center;flex-wrap:wrap;gap:8px}
+  .top-nav .nav-right{margin-left:auto}
+  .library-main{margin-top:24px}
 }
 .tab-btn{background:transparent;border:0;color:var(--muted);padding:8px 10px;border-radius:6px;cursor:pointer}
 .tab-btn.active{color:var(--text);border-bottom:3px solid var(--primary)}

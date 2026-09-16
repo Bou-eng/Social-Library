@@ -23,6 +23,9 @@ body.feed-page{min-height:100vh;margin:0;background:radial-gradient(circle at to
 .top-nav .nav-items{display:flex;gap:18px;align-items:center}
 .top-nav .nav-link{color:var(--text);text-decoration:none;font-weight:600;padding:8px 12px;border-radius:8px}
 .top-nav .nav-right { justify-self: end; display: flex; align-items: center; justify-content: flex-end; }
+.language-switcher{display:flex;align-items:center;margin-right:12px;flex:0 0 auto}
+.language-switcher a{color:var(--text);text-decoration:none;font-size:12px;font-weight:700;letter-spacing:.04em;padding:6px 8px;border:1px solid rgba(255,255,255,.12);border-radius:6px}
+.language-switcher a:hover{color:var(--primary);border-color:var(--primary)}
 .top-nav .nav-link.active, .top-nav .nav-link:hover{background:rgba(255,255,255,0.03);color:var(--primary)}
 .top-nav .user-area{display:flex;align-items:center}
 .user-profile{display:flex;align-items:center;gap:10px;position:relative}
@@ -387,6 +390,9 @@ body.feed-page{min-height:100vh;margin:0;background:radial-gradient(circle at to
     width:100%;
     text-align:center;
   }
+
+  .top-nav .nav-right{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+  .language-switcher{margin-right:0}
 
   .brand-logo{justify-content:center;gap:8px}
   .brand-icon{width:36px;height:36px;font-size:18px;border-radius:8px}
