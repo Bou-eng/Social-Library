@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Social Library">
+  <rect width="64" height="64" rx="14" fill="#3b82f6"/>
+  <path d="M15 17.5c0-2.5 2-4.5 4.5-4.5H31c3.3 0 6 2.7 6 6v31c-1.7-1.5-3.8-2.3-6-2.3H19.5c-2.5 0-4.5-2-4.5-4.5z" fill="#fff"/>
+  <path d="M49 17.5c0-2.5-2-4.5-4.5-4.5H33c-3.3 0-6 2.7-6 6v31c1.7-1.5 3.8-2.3 6-2.3h11.5c2.5 0 4.5-2 4.5-4.5z" fill="#dbeafe"/>
+  <path d="M20 23h10M20 30h10M39 23h5M39 30h5" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+</svg>
